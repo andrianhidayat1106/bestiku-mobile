@@ -25,7 +25,7 @@ class SignInView extends GetView<SignInController> {
               ),
               Center(child: Text("- Masuk ke akun Anda -")),
               SizedBox(height: 24),
-              Text("Email"),
+              Text("Email", style: TextStyle(fontWeight: FontWeight.w600)),
               TextField(
                 decoration: InputDecoration(
                   hintText: "Email",
@@ -35,7 +35,7 @@ class SignInView extends GetView<SignInController> {
                 ),
               ),
               SizedBox(height: 16),
-              Text("Password"),
+              Text("Password", style: TextStyle(fontWeight: FontWeight.w600)),
               TextField(
                 decoration: InputDecoration(
                   hintText: "Password",
