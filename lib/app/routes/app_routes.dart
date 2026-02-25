@@ -5,10 +5,18 @@ abstract class Routes {
   Routes._();
   static const HOME = _Paths.HOME;
   static const SIGN_IN = _Paths.SIGN_IN;
+  static const SIGN_UP = _Paths.SIGN_UP;
+  static const PROFILE = _Paths.PROFILE;
+  static const MAIN = _Paths.MAIN;
+  static const WALLET = _Paths.WALLET;
 }
 
 abstract class _Paths {
   _Paths._();
   static const HOME = '/home';
   static const SIGN_IN = '/sign-in';
+  static const SIGN_UP = '/sign-up';
+  static const PROFILE = '/profile';
+  static const MAIN = '/main';
+  static const WALLET = '/wallet';
 }
