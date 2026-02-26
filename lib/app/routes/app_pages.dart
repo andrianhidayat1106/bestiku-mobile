@@ -12,6 +12,8 @@ import '../modules/sign_up/bindings/sign_up_binding.dart';
 import '../modules/sign_up/views/sign_up_view.dart';
 import '../modules/wallet/bindings/wallet_binding.dart';
 import '../modules/wallet/views/wallet_view.dart';
+import '../modules/wallet/wallet_detail/bindings/wallet_detail_binding.dart';
+import '../modules/wallet/wallet_detail/views/wallet_detail_view.dart';
 
 part 'app_routes.dart';
 
@@ -50,6 +52,13 @@ class AppPages {
       name: _Paths.WALLET,
       page: () => const WalletView(),
       binding: WalletBinding(),
+      children: [
+        GetPage(
+          name: _Paths.WALLET_DETAIL,
+          page: () => const WalletDetailView(),
+          binding: WalletDetailBinding(),
+        ),
+      ],
     ),
   ];
 }

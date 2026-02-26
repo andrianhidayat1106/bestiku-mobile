@@ -1,4 +1,5 @@
 import 'package:bestieku/app/core/theme/app_colors.dart';
+import 'package:bestieku/app/routes/app_pages.dart';
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
@@ -89,9 +90,22 @@ class WalletView extends GetView<WalletController> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     SizedBox(height: 16),
-                    Text(
-                      "Dompet Anda",
-                      style: TextStyle(fontWeight: FontWeight.w500),
+                    InkWell(
+                      onTap: () => Get.toNamed(Routes.WALLET_DETAIL),
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.chevron_right,
+                            color: AppColors
+                                .primary, // Warna abu-abu agar tidak terlalu mencolok
+                            size: 25,
+                          ),
+                          Text(
+                            "Dompet Anda",
+                            style: TextStyle(fontWeight: FontWeight.w500),
+                          ),
+                        ],
+                      ),
                     ),
                     SizedBox(height: 8),
                     SizedBox(
@@ -294,7 +308,20 @@ class WalletView extends GetView<WalletController> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     SizedBox(height: 16),
-                    Text("Daftar Transaksi"),
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.chevron_right,
+                          color: AppColors
+                              .primary, // Warna abu-abu agar tidak terlalu mencolok
+                          size: 25,
+                        ),
+                        Text(
+                          "Daftar Transaksi",
+                          style: TextStyle(fontWeight: FontWeight.w500),
+                        ),
+                      ],
+                    ),
                     SizedBox(height: 8),
 
                     Container(
