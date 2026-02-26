@@ -1,5 +1,6 @@
 import 'package:bestieku/app/core/theme/app_colors.dart';
 import 'package:bestieku/app/modules/profile/views/profile_view.dart';
+import 'package:bestieku/app/modules/task/views/task_view.dart';
 import 'package:bestieku/app/modules/wallet/views/wallet_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -15,7 +16,7 @@ class MainView extends GetView<MainController> {
       body: Obx(
         () => IndexedStack(
           index: controller.currentIndex.value,
-          children: [ProfileView(), WalletView(), ProfileView()],
+          children: [TaskView(), WalletView(), ProfileView()],
         ),
       ),
       bottomNavigationBar: Obx(

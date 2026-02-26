@@ -71,6 +71,7 @@ flutter:
     - assets/images/icons/task.svg
     - assets/images/icons/wallet.svg
     - assets/images/icons/profile.svg
+    - assets/images/icons/calender.svg
     
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
