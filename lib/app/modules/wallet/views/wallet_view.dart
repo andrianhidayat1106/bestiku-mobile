@@ -308,19 +308,22 @@ class WalletView extends GetView<WalletController> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     SizedBox(height: 16),
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.chevron_right,
-                          color: AppColors
-                              .primary, // Warna abu-abu agar tidak terlalu mencolok
-                          size: 25,
-                        ),
-                        Text(
-                          "Daftar Transaksi",
-                          style: TextStyle(fontWeight: FontWeight.w500),
-                        ),
-                      ],
+                    InkWell(
+                      onTap: () => Get.toNamed(Routes.WALLET_TRANSACTION),
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.chevron_right,
+                            color: AppColors
+                                .primary, // Warna abu-abu agar tidak terlalu mencolok
+                            size: 25,
+                          ),
+                          Text(
+                            "Riwayat Transaksi",
+                            style: TextStyle(fontWeight: FontWeight.w500),
+                          ),
+                        ],
+                      ),
                     ),
                     SizedBox(height: 8),
 

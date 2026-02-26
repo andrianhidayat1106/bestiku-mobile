@@ -11,6 +11,7 @@ abstract class Routes {
   static const WALLET = _Paths.WALLET;
   static const TASK = _Paths.TASK;
   static const WALLET_DETAIL = _Paths.WALLET + _Paths.WALLET_DETAIL;
+  static const WALLET_TRANSACTION = _Paths.WALLET + _Paths.WALLET_TRANSACTION;
 }
 
 abstract class _Paths {
@@ -23,4 +24,5 @@ abstract class _Paths {
   static const WALLET = '/wallet';
   static const TASK = '/task';
   static const WALLET_DETAIL = '/wallet-detail';
+  static const WALLET_TRANSACTION = '/wallet-transaction';
 }
