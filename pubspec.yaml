@@ -28,15 +28,13 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
-
-  # The following adds the Cupertino Icons font to your application.
-  # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
   flutter:
     sdk: flutter
   get: ^4.7.3
 
 dev_dependencies:
+  dropdown_flutter: ^1.0.3
   flutter_lints: ^6.0.0
   flutter_svg: ^2.2.3
   flutter_test:
@@ -72,7 +70,6 @@ flutter:
     - assets/images/icons/wallet.svg
     - assets/images/icons/profile.svg
     - assets/images/icons/calender.svg
-    
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
   # For details regarding adding assets from package dependencies, see
