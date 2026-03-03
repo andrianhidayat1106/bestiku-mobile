@@ -1,4 +1,5 @@
 import 'package:bestieku/app/core/theme/app_colors.dart';
+import 'package:bestieku/app/routes/app_pages.dart';
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
@@ -135,9 +136,22 @@ class TaskView extends GetView<TaskController> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     SizedBox(height: 24),
-                    Text(
-                      "Tugas Project",
-                      style: TextStyle(fontWeight: FontWeight.w500),
+                    InkWell(
+                      onTap: () => Get.toNamed(Routes.TASK_PROJECT),
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.chevron_right,
+                            color: AppColors
+                                .primary, // Warna abu-abu agar tidak terlalu mencolok
+                            size: 25,
+                          ),
+                          Text(
+                            "Tugas Project",
+                            style: TextStyle(fontWeight: FontWeight.w500),
+                          ),
+                        ],
+                      ),
                     ),
                     SizedBox(height: 16),
                     SizedBox(

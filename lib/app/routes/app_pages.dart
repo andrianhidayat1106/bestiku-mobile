@@ -11,6 +11,12 @@ import '../modules/sign_in/views/sign_in_view.dart';
 import '../modules/sign_up/bindings/sign_up_binding.dart';
 import '../modules/sign_up/views/sign_up_view.dart';
 import '../modules/task/bindings/task_binding.dart';
+import '../modules/task/detail_project/bindings/detail_project_binding.dart';
+import '../modules/task/detail_project/views/detail_project_view.dart';
+import '../modules/task/task_daily/bindings/task_daily_binding.dart';
+import '../modules/task/task_daily/views/task_daily_view.dart';
+import '../modules/task/task_project/bindings/task_project_binding.dart';
+import '../modules/task/task_project/views/task_project_view.dart';
 import '../modules/task/views/task_view.dart';
 import '../modules/wallet/bindings/wallet_binding.dart';
 import '../modules/wallet/views/wallet_view.dart';
@@ -24,7 +30,7 @@ part 'app_routes.dart';
 class AppPages {
   AppPages._();
 
-  static const INITIAL = Routes.MAIN;
+  static const INITIAL = Routes.DETAIL_PROJECT;
 
   static final routes = [
     GetPage(
@@ -73,6 +79,23 @@ class AppPages {
       name: _Paths.TASK,
       page: () => const TaskView(),
       binding: TaskBinding(),
+      children: [
+        GetPage(
+          name: _Paths.TASK_PROJECT,
+          page: () => TaskProjectView(),
+          binding: TaskProjectBinding(),
+        ),
+        GetPage(
+          name: _Paths.DETAIL_PROJECT,
+          page: () => DetailProjectView(),
+          binding: DetailProjectBinding(),
+        ),
+        GetPage(
+          name: _Paths.TASK_DAILY,
+          page: () => const TaskDailyView(),
+          binding: TaskDailyBinding(),
+        ),
+      ],
     ),
   ];
 }

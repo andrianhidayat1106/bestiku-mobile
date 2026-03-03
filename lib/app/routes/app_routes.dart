@@ -12,6 +12,11 @@ abstract class Routes {
   static const TASK = _Paths.TASK;
   static const WALLET_DETAIL = _Paths.WALLET + _Paths.WALLET_DETAIL;
   static const WALLET_TRANSACTION = _Paths.WALLET + _Paths.WALLET_TRANSACTION;
+  static const TASK_PROJECT = _Paths.TASK + _Paths.TASK_PROJECT;
+  static const PROJECT_DETAIL =
+      _Paths.TASK + _Paths.TASK_PROJECT + _Paths.PROJECT_DETAIL;
+  static const DETAIL_PROJECT = _Paths.TASK + _Paths.DETAIL_PROJECT;
+  static const TASK_DAILY = _Paths.TASK + _Paths.TASK_DAILY;
 }
 
 abstract class _Paths {
@@ -25,4 +30,8 @@ abstract class _Paths {
   static const TASK = '/task';
   static const WALLET_DETAIL = '/wallet-detail';
   static const WALLET_TRANSACTION = '/wallet-transaction';
+  static const TASK_PROJECT = '/task-project';
+  static const PROJECT_DETAIL = '/project-detail';
+  static const DETAIL_PROJECT = '/detail-project';
+  static const TASK_DAILY = '/task-daily';
 }
