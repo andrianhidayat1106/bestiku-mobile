@@ -313,7 +313,23 @@ class TaskView extends GetView<TaskController> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     SizedBox(height: 24),
-                    Text("Daftar Tugas"),
+                    InkWell(
+                      onTap: () => Get.toNamed(Routes.TASK_LIST),
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.chevron_right,
+                            color: AppColors
+                                .primary, // Warna abu-abu agar tidak terlalu mencolok
+                            size: 25,
+                          ),
+                          Text(
+                            "Daftar Tugas",
+                            style: TextStyle(fontWeight: FontWeight.w500),
+                          ),
+                        ],
+                      ),
+                    ),
                     SizedBox(height: 16),
 
                     Container(

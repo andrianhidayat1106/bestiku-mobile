@@ -1,4 +1,6 @@
 import 'package:bestieku/app/core/theme/app_colors.dart';
+import 'package:bestieku/app/routes/app_pages.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
@@ -25,40 +27,70 @@ class SignInView extends GetView<SignInController> {
               ),
               Center(child: Text("- Masuk ke akun Anda -")),
               SizedBox(height: 24),
-              Text("Email", style: TextStyle(fontWeight: FontWeight.w600)),
-              TextField(
-                decoration: InputDecoration(
-                  hintText: "Email",
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
+
+              Form(
+                key: controller.formKey,
+                autovalidateMode: AutovalidateMode.onUnfocus,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Email",
+                      style: TextStyle(fontWeight: FontWeight.w600),
+                    ),
+                    TextFormField(
+                      controller: controller.emailC,
+                      decoration: InputDecoration(
+                        hintText: "Email",
+                        suffixText: "@gmail.com",
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.trim().isEmpty) {
+                          return "Alamat email wajib diisi.";
+                        }
+                        return null;
+                      },
+                    ),
+                    SizedBox(height: 16),
+                    Text(
+                      "Password",
+                      style: TextStyle(fontWeight: FontWeight.w600),
+                    ),
+                    TextFormField(
+                      controller: controller.passwordC,
+                      obscureText: true,
+                      decoration: InputDecoration(
+                        hintText: "Password",
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.trim().isEmpty) {
+                          return "Password wajib diisi.";
+                        }
+                        return null;
+                      },
+                    ),
+                  ],
                 ),
               ),
-              SizedBox(height: 16),
-              Text("Password", style: TextStyle(fontWeight: FontWeight.w600)),
-              TextField(
-                decoration: InputDecoration(
-                  hintText: "Password",
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-              ),
+
               SizedBox(height: 4),
-              Align(
-                alignment: AlignmentGeometry.topRight,
-                child: Text(
-                  "Lupa password?",
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: AppColors.primary.withValues(alpha: 0.7),
-                  ),
-                ),
-              ),
+
               SizedBox(height: 16),
               SizedBox(
                 height: 49,
-                child: ElevatedButton(onPressed: () {}, child: Text("Masuk")),
+                child: Obx(() {
+                  bool loading = controller.isLoading.value;
+                  return ElevatedButton(
+                    onPressed: loading ? null : () => controller.signIn(),
+                    child: Text("Masuk"),
+                  );
+                }),
               ),
               const Spacer(),
               Center(
@@ -71,10 +103,16 @@ class SignInView extends GetView<SignInController> {
                     children: [
                       TextSpan(
                         text: "Daftar",
+
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
-                          color: AppColors.primary, // 🔥 warna bisa kamu set
+                          color: AppColors.primary,
+                          // 🔥 warna bisa kamu set
                         ),
+                        recognizer: TapGestureRecognizer()
+                          ..onTap = () {
+                            Get.offAllNamed(Routes.SIGN_UP);
+                          },
                       ),
                     ],
                   ),

@@ -17,6 +17,8 @@ abstract class Routes {
       _Paths.TASK + _Paths.TASK_PROJECT + _Paths.PROJECT_DETAIL;
   static const DETAIL_PROJECT = _Paths.TASK + _Paths.DETAIL_PROJECT;
   static const TASK_DAILY = _Paths.TASK + _Paths.TASK_DAILY;
+  static const LIST_TASK = _Paths.TASK + _Paths.LIST_TASK;
+  static const TASK_LIST = _Paths.TASK + _Paths.TASK_LIST;
 }
 
 abstract class _Paths {
@@ -34,4 +36,6 @@ abstract class _Paths {
   static const PROJECT_DETAIL = '/project-detail';
   static const DETAIL_PROJECT = '/detail-project';
   static const TASK_DAILY = '/task-daily';
+  static const LIST_TASK = '/list-task';
+  static const TASK_LIST = '/task-list';
 }
