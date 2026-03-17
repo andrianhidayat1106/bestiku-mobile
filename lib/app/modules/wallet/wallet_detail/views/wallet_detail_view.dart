@@ -1,10 +1,12 @@
 import 'package:bestieku/app/core/theme/app_colors.dart';
+import 'package:bestieku/app/models/wallet_model.dart';
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
 import 'package:get/get_connect/http/src/utils/utils.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../controllers/wallet_detail_controller.dart';
+import 'package:flutter/services.dart';
 
 class WalletDetailView extends GetView<WalletDetailController> {
   const WalletDetailView({super.key});
@@ -69,9 +71,11 @@ class WalletDetailView extends GetView<WalletDetailController> {
                       padding: EdgeInsetsGeometry.only(left: 16, right: 16),
                       child: ElevatedButton(
                         onPressed: () {
+                          controller.prepareAdd();
                           Get.bottomSheet(
                             isScrollControlled: true,
-                            WalletFormSheet(),
+
+                            WalletFormSheet(isEdit: false),
                           );
                         },
                         style: ElevatedButton.styleFrom(
@@ -119,7 +123,16 @@ class WalletDetailView extends GetView<WalletDetailController> {
                               );
                             }
 
-                            return ListView.builder(
+                            return ListView.separated(
+                              separatorBuilder: (context, index) => Divider(
+                                height: 1, // Tinggi area divider
+                                thickness: 1, // Ketebalan garis
+                                color: Colors.grey[200], // Warna garis (soft)
+                                indent:
+                                    70, // Garis mulai setelah icon (biar rapi)
+                                endIndent:
+                                    16, // Jarak garis sebelum mentok kanan
+                              ),
                               itemCount: controller.listWallet.length,
                               itemBuilder: (context, index) {
                                 final wallet = controller.listWallet[index];
@@ -136,14 +149,10 @@ class WalletDetailView extends GetView<WalletDetailController> {
                                     ),
                                     child: InkWell(
                                       onTap: () {
-                                        // Get.snackbar(
-                                        //   "Info",
-                                        //   "Kamu mengklik wallet ${wallet.name}",
-                                        // );
-
+                                        controller.prepareEdit(wallet);
                                         Get.bottomSheet(
                                           isScrollControlled: true,
-                                          WalletFormSheet(),
+                                          WalletFormSheet(isEdit: true),
                                         );
                                       },
                                       borderRadius: BorderRadius.circular(12),
@@ -207,6 +216,9 @@ class WalletDetailView extends GetView<WalletDetailController> {
 }
 
 class WalletFormSheet extends GetView<WalletDetailController> {
+  final bool isEdit;
+  const WalletFormSheet({super.key, this.isEdit = false});
+
   Widget build(BuildContext context) {
     return SizedBox(
       height: Get.height * 0.6,
@@ -227,7 +239,7 @@ class WalletFormSheet extends GetView<WalletDetailController> {
             children: [
               Center(
                 child: Text(
-                  "Tambah Dompet",
+                  isEdit ? "Edit Dompet" : "Tambah Dompet",
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -239,16 +251,53 @@ class WalletFormSheet extends GetView<WalletDetailController> {
 
               Expanded(
                 child: Form(
+                  key: controller.formKey,
+                  autovalidateMode: AutovalidateMode.onUnfocus,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text("Nama Dompet"),
                       SizedBox(height: 4),
-                      TextFormField(controller: controller.nameController),
+                      TextFormField(
+                        controller: controller.nameController,
+
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return "Nama dompet tidak boleh kosong";
+                          }
+                          return null;
+                        },
+                        decoration: InputDecoration(
+                          focusedErrorBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide(color: Colors.red, width: 2),
+                          ),
+                          errorBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide(color: Colors.red, width: 1),
+                          ),
+                        ),
+                      ),
                       SizedBox(height: 8),
                       Text("Total Uang"),
                       SizedBox(height: 4),
-                      TextFormField(controller: controller.amountController),
+                      TextFormField(
+                        controller: controller.amountController,
+                        decoration: InputDecoration(
+                          focusedErrorBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide(color: Colors.red, width: 2),
+                          ),
+                          errorBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide(color: Colors.red, width: 1),
+                          ),
+                        ),
+                        // 2. Batasi input hanya angka (membutuhkan import 'package:flutter/services.dart')
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly,
+                        ],
+                      ),
                       SizedBox(height: 8),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -477,39 +526,64 @@ class WalletFormSheet extends GetView<WalletDetailController> {
                   ),
                 ),
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  OutlinedButton(
-                    style: OutlinedButton.styleFrom(
-                      side: BorderSide(color: AppColors.primary),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 30,
-                        vertical: 15,
+
+              isEdit
+                  ? Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: OutlinedButton(
+                            style: OutlinedButton.styleFrom(
+                              side: BorderSide(color: AppColors.primary),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(50),
+                              ),
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 30,
+                                vertical: 15,
+                              ),
+                            ),
+                            onPressed: () {
+                              controller.deleteWallet();
+                            },
+                            child: Text("Hapus"),
+                          ),
+                        ),
+                        SizedBox(width: 12),
+                        Expanded(
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(50),
+                              ),
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 30,
+                                vertical: 15,
+                              ),
+                            ),
+                            onPressed: () {
+                              controller.updateWallet();
+                            },
+                            child: Text("Simpan"),
+                          ),
+                        ),
+                      ],
+                    )
+                  : SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          padding: EdgeInsets.all(16),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(50),
+                          ),
+                        ),
+                        onPressed: () {
+                          controller.addWallet();
+                        },
+                        child: Text("Tambahkan"),
                       ),
                     ),
-                    onPressed: () {
-                      Get.back();
-                    },
-                    child: Text("Hapus Dompet"),
-                  ),
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 30,
-                        vertical: 15,
-                      ), // Perbesar di sini
-                    ),
-                    onPressed: () {
-                      Get.back();
-                    },
-                    child: Text("Ubah Dompet"),
-                  ),
-                ],
-              ),
             ],
           ),
         ),

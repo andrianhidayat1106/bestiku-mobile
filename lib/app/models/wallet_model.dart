@@ -2,16 +2,16 @@ class WalletModel {
   int? id;
   String? name;
   int? totalAmount;
-  String? logo;
+  String? icon;
   String? color;
 
-  WalletModel({this.id, this.name, this.totalAmount, this.logo, this.color});
+  WalletModel({this.id, this.name, this.totalAmount, this.icon, this.color});
 
   WalletModel.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     name = json['name'];
     totalAmount = json['total_amount'];
-    logo = json['logo'];
+    icon = json['icon'];
     color = json['color'];
   }
 }
