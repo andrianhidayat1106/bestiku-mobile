@@ -124,15 +124,8 @@ class WalletDetailView extends GetView<WalletDetailController> {
                             }
 
                             return ListView.separated(
-                              separatorBuilder: (context, index) => Divider(
-                                height: 1, // Tinggi area divider
-                                thickness: 1, // Ketebalan garis
-                                color: Colors.grey[200], // Warna garis (soft)
-                                indent:
-                                    70, // Garis mulai setelah icon (biar rapi)
-                                endIndent:
-                                    16, // Jarak garis sebelum mentok kanan
-                              ),
+                              separatorBuilder: (context, index) =>
+                                  SizedBox(height: 24),
                               itemCount: controller.listWallet.length,
                               itemBuilder: (context, index) {
                                 final wallet = controller.listWallet[index];
@@ -168,7 +161,13 @@ class WalletDetailView extends GetView<WalletDetailController> {
                                                   BorderRadius.circular(12),
                                             ),
                                             child: SvgPicture.asset(
-                                              "assets/images/icons/wallet.svg",
+                                              controller.listIcon(wallet.icon),
+                                              colorFilter: ColorFilter.mode(
+                                                controller.listColor(
+                                                  wallet.color,
+                                                ),
+                                                BlendMode.srcIn,
+                                              ),
                                             ),
                                           ),
                                           SizedBox(width: 12),
@@ -527,63 +526,64 @@ class WalletFormSheet extends GetView<WalletDetailController> {
                 ),
               ),
 
-              isEdit
-                  ? Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Expanded(
-                          child: OutlinedButton(
-                            style: OutlinedButton.styleFrom(
-                              side: BorderSide(color: AppColors.primary),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(50),
+              Obx(() {
+                final isLoading = controller.isLoading.value;
+
+                return isEdit
+                    ? Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: OutlinedButton(
+                              style: OutlinedButton.styleFrom(
+                                side: BorderSide(color: AppColors.primary),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(50),
+                                ),
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 30,
+                                  vertical: 15,
+                                ),
                               ),
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 30,
-                                vertical: 15,
-                              ),
+                              onPressed: () =>
+                                  isLoading ? null : controller.deleteWallet(),
+                              child: Text("Hapus"),
                             ),
-                            onPressed: () {
-                              controller.deleteWallet();
-                            },
-                            child: Text("Hapus"),
                           ),
-                        ),
-                        SizedBox(width: 12),
-                        Expanded(
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(50),
+                          SizedBox(width: 12),
+                          Expanded(
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(50),
+                                ),
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 30,
+                                  vertical: 15,
+                                ),
                               ),
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 30,
-                                vertical: 15,
-                              ),
+                              onPressed: () =>
+                                  isLoading ? null : controller.updateWallet(),
+                              child: Text("Simpan"),
                             ),
-                            onPressed: () {
-                              controller.updateWallet();
-                            },
-                            child: Text("Simpan"),
                           ),
-                        ),
-                      ],
-                    )
-                  : SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          padding: EdgeInsets.all(16),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(50),
+                        ],
+                      )
+                    : SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            padding: EdgeInsets.all(16),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(50),
+                            ),
                           ),
+                          onPressed: () =>
+                              isLoading ? null : controller.addWallet(),
+                          child: Text("Tambahkan"),
                         ),
-                        onPressed: () {
-                          controller.addWallet();
-                        },
-                        child: Text("Tambahkan"),
-                      ),
-                    ),
+                      );
+              }),
             ],
           ),
         ),

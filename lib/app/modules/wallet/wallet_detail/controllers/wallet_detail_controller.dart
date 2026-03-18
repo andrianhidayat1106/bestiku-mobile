@@ -16,6 +16,32 @@ class WalletDetailController extends GetxController {
   var selectColorName = 'green'.obs;
   var selectIconName = 'wallet'.obs;
 
+  Color listColor(String? value) {
+    switch (value) {
+      case 'red':
+        return const Color.fromARGB(255, 143, 105, 112);
+      case 'blue':
+        return const Color(0XFF00C0E8);
+      case 'green':
+        return const Color(0XFF34C759);
+      default:
+        return const Color(0XFF34C759);
+    }
+  }
+
+  String listIcon(String? value) {
+    switch (value) {
+      case 'wallet':
+        return "assets/images/icons/wallet.svg";
+      case 'wallet_two':
+        return "assets/images/icons/wallet_two.svg";
+      case 'bank':
+        return "assets/images/icons/bank.svg";
+      default:
+        return "assets/images/icons/wallet.svg";
+    }
+  }
+
   void selectColor(String name) {
     selectColorName.value = name;
   }
@@ -122,9 +148,9 @@ class WalletDetailController extends GetxController {
 
   void prepareAdd() {
     nameController.text = "";
-    amountController.text = "";
-    selectColorName.value = "";
-    selectIconName.value = "";
+    amountController.text = "0";
+    selectColorName.value = "green";
+    selectIconName.value = "wallet";
     selectedWalletId = null;
   }
 
