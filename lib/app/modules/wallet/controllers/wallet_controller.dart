@@ -1,23 +1,14 @@
+import 'package:bestieku/app/data/wallet_provider.dart';
+import 'package:bestieku/app/modules/wallet/wallet_detail/controllers/wallet_detail_controller.dart';
 import 'package:get/get.dart';
 
 class WalletController extends GetxController {
-  //TODO: Implement WalletController
+  WalletProvider _walletProvider = WalletProvider();
 
-  final count = 0.obs;
   @override
   void onInit() {
     super.onInit();
   }
 
-  @override
-  void onReady() {
-    super.onReady();
-  }
-
-  @override
-  void onClose() {
-    super.onClose();
-  }
-
-  void increment() => count.value++;
+  void fetchWallet() {}
 }

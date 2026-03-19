@@ -1,10 +1,11 @@
+import 'package:bestieku/app/data/wallet_provider.dart';
 import 'package:bestieku/app/models/wallet_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class WalletDetailController extends GetxController {
-  final supabase = Supabase.instance.client;
+  WalletProvider _walletProvider = WalletProvider();
 
   var listWallet = <WalletModel>[].obs;
   var isLoading = false.obs;
@@ -67,13 +68,11 @@ class WalletDetailController extends GetxController {
     try {
       isLoading.value = true;
 
-      final data = await supabase.from("wallet").select();
+      final data = await _walletProvider.getWallet();
 
       listWallet.value = (data as List)
           .map((item) => WalletModel.fromJson(item))
           .toList();
-
-      print(listWallet.value);
     } catch (e) {
       Get.snackbar("Error", e.toString());
     } finally {
@@ -88,12 +87,14 @@ class WalletDetailController extends GetxController {
 
     try {
       isLoading.value = true;
-      await supabase.from("wallet").insert({
+
+      final Map<String, dynamic> data = {
         'name': nameController.text.trim(),
         'total_amount': int.parse(amountController.text.trim()),
         'color': selectColorName.value,
         'icon': selectIconName.value,
-      });
+      };
+      await _walletProvider.createWallet(data);
 
       Get.back();
       clearForm();
@@ -120,7 +121,7 @@ class WalletDetailController extends GetxController {
     }
     try {
       isLoading.value = true;
-      await supabase.from("wallet").delete().eq('id', selectedWalletId);
+      await _walletProvider.deleteWallet(selectedWalletId);
 
       Get.back();
       fetchWallet();
@@ -163,15 +164,14 @@ class WalletDetailController extends GetxController {
 
     try {
       isLoading.value = true;
-      await supabase
-          .from("wallet")
-          .update({
-            'name': nameController.text.trim(),
-            'total_amount': int.parse(amountController.text.trim()),
-            'color': selectColorName.value,
-            'icon': selectIconName.value,
-          })
-          .eq('id', selectedWalletId);
+      Map<String, dynamic> data = {
+        'name': nameController.text.trim(),
+        'total_amount': int.parse(amountController.text.trim()),
+        'color': selectColorName.value,
+        'icon': selectIconName.value,
+      };
+      await _walletProvider.updateWallet(selectedWalletId, data);
+
       Get.back();
       fetchWallet();
       Get.snackbar(

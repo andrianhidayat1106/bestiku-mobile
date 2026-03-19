@@ -1,9 +1,8 @@
 import 'package:bestieku/app/core/theme/app_colors.dart';
 import 'package:bestieku/app/routes/app_pages.dart';
 import 'package:flutter/material.dart';
-
 import 'package:get/get.dart';
-
+import 'package:intl/intl.dart';
 import '../controllers/wallet_controller.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -16,7 +15,6 @@ class WalletView extends GetView<WalletController> {
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-
             children: [
               Padding(
                 padding: EdgeInsetsGeometry.only(left: 16, right: 16),
@@ -31,7 +29,6 @@ class WalletView extends GetView<WalletController> {
                       ],
                     ),
                     SizedBox(height: 8),
-
                     Text(
                       "Lakukan yang terbaik hari ini!",
                       style: TextStyle(
@@ -39,7 +36,13 @@ class WalletView extends GetView<WalletController> {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    Text("Kamis, 19 Feb 2026", style: TextStyle(fontSize: 16)),
+                    Text(
+                      DateFormat(
+                        "EEE, d MMM yyyy",
+                        'id_ID',
+                      ).format(DateTime.now()),
+                      style: TextStyle(fontSize: 16),
+                    ),
                     SizedBox(height: 16),
                     Stack(
                       children: [

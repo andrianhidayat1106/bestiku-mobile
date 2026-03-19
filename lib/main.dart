@@ -1,6 +1,6 @@
 import 'package:bestieku/app/core/theme/app_theme.dart';
 import 'package:flutter/material.dart';
-
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:get/get.dart';
 // ignore: depend_on_referenced_packages
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -8,6 +8,7 @@ import 'app/routes/app_pages.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await initializeDateFormatting('id_ID', null);
   await Supabase.initialize(
     url: "https://xcnggwwbpnvifejapdgq.supabase.co",
     anonKey: "sb_publishable_iSsvqMdwj1R9LijsNyj44g_4aZ3OsEY",
