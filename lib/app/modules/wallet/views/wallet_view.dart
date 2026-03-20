@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import '../controllers/wallet_controller.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:dropdown_flutter/custom_dropdown.dart';
 
 class WalletView extends GetView<WalletController> {
   const WalletView({super.key});
@@ -111,79 +112,119 @@ class WalletView extends GetView<WalletController> {
                       ),
                     ),
                     SizedBox(height: 8),
-                    SizedBox(
-                      height: 145,
-                      child: ListView.separated(
-                        separatorBuilder: (context, index) {
-                          return SizedBox(width: 8);
-                        },
-                        itemCount: controller.listWallet.length,
-                        clipBehavior: Clip.none,
-                        scrollDirection: Axis.horizontal,
-                        itemBuilder: (context, index) {
-                          return Container(
-                            padding: EdgeInsets.all(12),
-                            width: 150,
-                            height: 145,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(12),
-                              color: Colors.white,
-                              boxShadow: [
-                                BoxShadow(color: Colors.black, blurRadius: 0.2),
-                              ],
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  children: [
-                                    Container(
-                                      padding: EdgeInsets.all(12),
-                                      width: 50,
-                                      height: 50,
-                                      decoration: BoxDecoration(
-                                        color: Color(0xFFF7F7F7),
-                                        borderRadius: BorderRadius.circular(12),
-                                      ),
-                                      child: SvgPicture.asset(
-                                        "assets/images/icons/wallet.svg",
-                                      ),
-                                    ),
-                                    SizedBox(width: 6),
-                                    Expanded(
-                                      child: Text(
-                                        "BANK BCA",
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                      ),
+                    Obx(() {
+                      return SizedBox(
+                        height: 145,
+                        child: ListView.separated(
+                          separatorBuilder: (context, index) {
+                            return SizedBox(width: 8);
+                          },
+                          itemCount: controller.listWallet.length,
+                          clipBehavior: Clip.none,
+                          scrollDirection: Axis.horizontal,
+                          itemBuilder: (context, index) {
+                            final wallet = controller.listWallet[index];
+                            return Material(
+                              child: Ink(
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black12,
+                                      blurRadius: 4,
                                     ),
                                   ],
                                 ),
-                                Divider(thickness: 1, color: Colors.grey),
-                                Text(
-                                  "Total",
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w400,
-                                    color: Colors.grey,
-                                    fontSize: 12,
+                                child: InkWell(
+                                  onTap: () {
+                                    Get.bottomSheet(
+                                      isScrollControlled: true,
+                                      WalletTransactionSheet(),
+                                    );
+                                  },
+                                  child: Container(
+                                    padding: EdgeInsets.all(12),
+                                    width: 150,
+                                    height: 145,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(12),
+                                      color: Colors.white,
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.black,
+                                          blurRadius: 0.2,
+                                        ),
+                                      ],
+                                    ),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            Container(
+                                              padding: EdgeInsets.all(12),
+                                              width: 50,
+                                              height: 50,
+                                              decoration: BoxDecoration(
+                                                color: Color(0xFFF7F7F7),
+                                                borderRadius:
+                                                    BorderRadius.circular(12),
+                                              ),
+                                              child: SvgPicture.asset(
+                                                controller.listIcon(
+                                                  wallet.icon,
+                                                ),
+                                                colorFilter: ColorFilter.mode(
+                                                  controller.listColor(
+                                                    wallet.color,
+                                                  ),
+                                                  BlendMode.srcIn,
+                                                ),
+                                              ),
+                                            ),
+                                            SizedBox(width: 6),
+                                            Expanded(
+                                              child: Text(
+                                                wallet.name.toString(),
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.w500,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        Divider(
+                                          thickness: 1,
+                                          color: Colors.grey,
+                                        ),
+                                        Text(
+                                          "Total",
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.w400,
+                                            color: Colors.grey,
+                                            fontSize: 12,
+                                          ),
+                                        ),
+                                        SizedBox(height: 4),
+                                        Text(
+                                          "Rp ${wallet.totalAmount}",
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: AppColors.lightOrange,
+                                            fontSize: 16,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
-                                SizedBox(height: 4),
-                                Text(
-                                  "Rp 500.000",
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: AppColors.lightOrange,
-                                    fontSize: 16,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          );
-                        },
-                      ),
-                    ),
+                              ),
+                            );
+                          },
+                        ),
+                      );
+                    }),
                   ],
                 ),
               ),
@@ -433,6 +474,170 @@ class WalletView extends GetView<WalletController> {
                     ),
                   ],
                 ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class WalletTransactionSheet extends GetView<WalletController> {
+  const WalletTransactionSheet({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: Get.height * 0.6,
+      child: Container(
+        width: double.infinity,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(50),
+            topRight: Radius.circular(50),
+          ),
+          color: Colors.white,
+        ),
+        child: Padding(
+          padding: EdgeInsets.all(24),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Center(
+                child: Text(
+                  "Transaksi",
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.primary,
+                  ),
+                ),
+              ),
+              SizedBox(height: 12),
+              Expanded(
+                child: Form(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text("Dompet"),
+                      Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(
+                            color: Colors
+                                .grey
+                                .shade300, // Warna border default TextField
+                            width: 1.0,
+                          ),
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(16),
+
+                          child: DropdownFlutter(
+                            decoration: CustomDropdownDecoration(
+                              listItemStyle: TextStyle(
+                                fontWeight: FontWeight.w400,
+                              ),
+                              headerStyle: TextStyle(
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
+                            hintText: "Semua Dompet",
+                            items: ['Semua Dompet'],
+                            onChanged: (value) {
+                              print("selected $value");
+                            },
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 8),
+                      Text("Total Uang"),
+                      SizedBox(height: 4),
+                      TextFormField(
+                        // controller: controller.nameController,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return "Nama dompet tidak boleh kosong";
+                          }
+                          return null;
+                        },
+                        decoration: InputDecoration(
+                          focusedErrorBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide(color: Colors.red, width: 2),
+                          ),
+                          errorBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide(color: Colors.red, width: 1),
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 8),
+                      Text("Deskripsi"),
+                      SizedBox(height: 4),
+                      TextFormField(
+                        maxLines: 4,
+                        // controller: controller.nameController,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return "Nama dompet tidak boleh kosong";
+                          }
+                          return null;
+                        },
+                        decoration: InputDecoration(
+                          focusedErrorBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide(color: Colors.red, width: 2),
+                          ),
+                          errorBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide(color: Colors.red, width: 1),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(50),
+                        ),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 30,
+                          vertical: 15,
+                        ),
+                        backgroundColor: Colors.red,
+                      ),
+                      onPressed: () {},
+
+                      child: Text("Pendapatan"),
+                    ),
+                  ),
+                  SizedBox(width: 12),
+                  Expanded(
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(50),
+                        ),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 30,
+                          vertical: 15,
+                        ),
+                        backgroundColor: Colors.green,
+                      ),
+                      onPressed: () {},
+                      child: Text("Pendapatan"),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),

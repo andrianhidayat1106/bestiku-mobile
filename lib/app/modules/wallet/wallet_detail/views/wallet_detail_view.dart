@@ -167,11 +167,11 @@ class WalletDetailView extends GetView<WalletDetailController> {
                                                   BorderRadius.circular(12),
                                             ),
                                             child: SvgPicture.asset(
-                                              controller.listIcon(wallet.icon),
+                                              controller.walletController
+                                                  .listIcon(wallet.icon),
                                               colorFilter: ColorFilter.mode(
-                                                controller.listColor(
-                                                  wallet.color,
-                                                ),
+                                                controller.walletController
+                                                    .listColor(wallet.color),
                                                 BlendMode.srcIn,
                                               ),
                                             ),
