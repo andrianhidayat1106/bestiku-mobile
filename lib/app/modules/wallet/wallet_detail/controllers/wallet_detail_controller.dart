@@ -1,13 +1,14 @@
 import 'package:bestieku/app/data/wallet_provider.dart';
 import 'package:bestieku/app/models/wallet_model.dart';
+import 'package:bestieku/app/modules/wallet/controllers/wallet_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class WalletDetailController extends GetxController {
   WalletProvider _walletProvider = WalletProvider();
+  WalletController walletController = WalletController();
 
-  var listWallet = <WalletModel>[].obs;
   var isLoading = false.obs;
 
   int? selectedWalletId;
@@ -16,6 +17,12 @@ class WalletDetailController extends GetxController {
   final formKey = GlobalKey<FormState>();
   var selectColorName = 'green'.obs;
   var selectIconName = 'wallet'.obs;
+
+  @override
+  void onInit() {
+    super.onInit();
+    walletController.fetchWallet();
+  }
 
   Color listColor(String? value) {
     switch (value) {
@@ -58,28 +65,6 @@ class WalletDetailController extends GetxController {
     selectIconName.value = 'wallet';
   }
 
-  @override
-  void onInit() {
-    fetchWallet();
-    super.onInit();
-  }
-
-  Future<void> fetchWallet() async {
-    try {
-      isLoading.value = true;
-
-      final data = await _walletProvider.getWallet();
-
-      listWallet.value = (data as List)
-          .map((item) => WalletModel.fromJson(item))
-          .toList();
-    } catch (e) {
-      Get.snackbar("Error", e.toString());
-    } finally {
-      isLoading.value = false;
-    }
-  }
-
   Future<void> addWallet() async {
     if (!formKey.currentState!.validate()) {
       return;
@@ -98,7 +83,7 @@ class WalletDetailController extends GetxController {
 
       Get.back();
       clearForm();
-      fetchWallet();
+      await walletController.fetchWallet();
       Get.snackbar(
         "Sukses",
         "Dompet baru berhasil ditambahkan",
@@ -124,7 +109,7 @@ class WalletDetailController extends GetxController {
       await _walletProvider.deleteWallet(selectedWalletId);
 
       Get.back();
-      fetchWallet();
+      await walletController.fetchWallet();
 
       Get.snackbar(
         "Sukses",
@@ -173,7 +158,7 @@ class WalletDetailController extends GetxController {
       await _walletProvider.updateWallet(selectedWalletId, data);
 
       Get.back();
-      fetchWallet();
+      await walletController.fetchWallet();
       Get.snackbar(
         "Sukses",
         "Dompet berhasil diperbarui",

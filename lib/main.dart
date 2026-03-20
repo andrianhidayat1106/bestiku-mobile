@@ -26,6 +26,7 @@ void main() async {
   } else {
     print("USER TIDAK ADA (NULL)");
   }
+
   runApp(
     GetMaterialApp(
       title: "Application",

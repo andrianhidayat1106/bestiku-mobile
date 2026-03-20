@@ -117,7 +117,10 @@ class WalletDetailView extends GetView<WalletDetailController> {
                               return Center(child: CircularProgressIndicator());
                             }
 
-                            if (controller.listWallet.isEmpty) {
+                            if (controller
+                                .walletController
+                                .listWallet
+                                .isEmpty) {
                               return Center(
                                 child: Text("Daftar Dompet anda masih kosong"),
                               );
@@ -126,9 +129,12 @@ class WalletDetailView extends GetView<WalletDetailController> {
                             return ListView.separated(
                               separatorBuilder: (context, index) =>
                                   SizedBox(height: 24),
-                              itemCount: controller.listWallet.length,
+                              itemCount:
+                                  controller.walletController.listWallet.length,
                               itemBuilder: (context, index) {
-                                final wallet = controller.listWallet[index];
+                                final wallet = controller
+                                    .walletController
+                                    .listWallet[index];
                                 return Material(
                                   child: Ink(
                                     decoration: BoxDecoration(

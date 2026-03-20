@@ -113,11 +113,15 @@ class WalletView extends GetView<WalletController> {
                     SizedBox(height: 8),
                     SizedBox(
                       height: 145,
-                      child: ListView(
+                      child: ListView.separated(
+                        separatorBuilder: (context, index) {
+                          return SizedBox(width: 8);
+                        },
+                        itemCount: controller.listWallet.length,
                         clipBehavior: Clip.none,
                         scrollDirection: Axis.horizontal,
-                        children: [
-                          Container(
+                        itemBuilder: (context, index) {
+                          return Container(
                             padding: EdgeInsets.all(12),
                             width: 150,
                             height: 145,
@@ -176,130 +180,8 @@ class WalletView extends GetView<WalletController> {
                                 ),
                               ],
                             ),
-                          ),
-                          SizedBox(width: 10),
-                          Container(
-                            padding: EdgeInsets.all(12),
-                            width: 150,
-                            height: 145,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(12),
-                              color: Colors.white,
-                              boxShadow: [
-                                BoxShadow(color: Colors.black, blurRadius: 0.2),
-                              ],
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  children: [
-                                    Container(
-                                      padding: EdgeInsets.all(12),
-                                      width: 50,
-                                      height: 50,
-                                      decoration: BoxDecoration(
-                                        color: Color(0xFFF7F7F7),
-                                        borderRadius: BorderRadius.circular(12),
-                                      ),
-                                      child: SvgPicture.asset(
-                                        "assets/images/icons/wallet.svg",
-                                      ),
-                                    ),
-                                    SizedBox(width: 6),
-                                    Expanded(
-                                      child: Text(
-                                        "BANK BCA",
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                Divider(thickness: 1, color: Colors.grey),
-                                Text(
-                                  "Total",
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w400,
-                                    color: Colors.grey,
-                                    fontSize: 12,
-                                  ),
-                                ),
-                                SizedBox(height: 4),
-                                Text(
-                                  "Rp 500.000",
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: AppColors.lightOrange,
-                                    fontSize: 16,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          SizedBox(width: 10),
-                          Container(
-                            padding: EdgeInsets.all(12),
-                            width: 150,
-                            height: 145,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(12),
-                              color: Colors.white,
-                              boxShadow: [
-                                BoxShadow(color: Colors.black, blurRadius: 0.2),
-                              ],
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  children: [
-                                    Container(
-                                      padding: EdgeInsets.all(12),
-                                      width: 50,
-                                      height: 50,
-                                      decoration: BoxDecoration(
-                                        color: Color(0xFFF7F7F7),
-                                        borderRadius: BorderRadius.circular(12),
-                                      ),
-                                      child: SvgPicture.asset(
-                                        "assets/images/icons/wallet.svg",
-                                      ),
-                                    ),
-                                    SizedBox(width: 6),
-                                    Expanded(
-                                      child: Text(
-                                        "BANK BCA",
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                Divider(thickness: 1, color: Colors.grey),
-                                Text(
-                                  "Total",
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w400,
-                                    color: Colors.grey,
-                                    fontSize: 12,
-                                  ),
-                                ),
-                                SizedBox(height: 4),
-                                Text(
-                                  "Rp 500.000",
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: AppColors.lightOrange,
-                                    fontSize: 16,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
+                          );
+                        },
                       ),
                     ),
                   ],
