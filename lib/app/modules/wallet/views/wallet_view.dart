@@ -1,6 +1,8 @@
 import 'package:bestieku/app/core/theme/app_colors.dart';
+import 'package:bestieku/app/models/wallet_model.dart';
 import 'package:bestieku/app/routes/app_pages.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import '../controllers/wallet_controller.dart';
@@ -123,7 +125,8 @@ class WalletView extends GetView<WalletController> {
                           clipBehavior: Clip.none,
                           scrollDirection: Axis.horizontal,
                           itemBuilder: (context, index) {
-                            final wallet = controller.listWallet[index];
+                            final WalletModel wallet =
+                                controller.listWallet[index];
                             return Material(
                               child: Ink(
                                 decoration: BoxDecoration(
@@ -137,6 +140,7 @@ class WalletView extends GetView<WalletController> {
                                 ),
                                 child: InkWell(
                                   onTap: () {
+                                    controller.selectWallet.value = wallet;
                                     Get.bottomSheet(
                                       isScrollControlled: true,
                                       WalletTransactionSheet(),
@@ -533,8 +537,8 @@ class WalletTransactionSheet extends GetView<WalletController> {
                         ),
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(16),
-
-                          child: DropdownFlutter(
+                          child: DropdownFlutter<WalletModel>(
+                            initialItem: controller.selectWallet.value,
                             decoration: CustomDropdownDecoration(
                               listItemStyle: TextStyle(
                                 fontWeight: FontWeight.w400,
@@ -543,10 +547,12 @@ class WalletTransactionSheet extends GetView<WalletController> {
                                 fontWeight: FontWeight.w400,
                               ),
                             ),
-                            hintText: "Semua Dompet",
-                            items: ['Semua Dompet'],
-                            onChanged: (value) {
-                              print("selected $value");
+
+                            items: controller.listWallet,
+                            onChanged: (WalletModel? wallet) {
+                              if (wallet != null) {
+                                controller.selectWallet.value = wallet;
+                              }
                             },
                           ),
                         ),
@@ -555,10 +561,15 @@ class WalletTransactionSheet extends GetView<WalletController> {
                       Text("Total Uang"),
                       SizedBox(height: 4),
                       TextFormField(
-                        // controller: controller.nameController,
+                        keyboardType: TextInputType.number,
+                        // 2. Mencegah input selain angka di level sistem
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly,
+                        ],
+                        controller: controller.totalAmountController,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return "Nama dompet tidak boleh kosong";
+                            return "Jumlah tidak boleh kosong";
                           }
                           return null;
                         },
@@ -578,7 +589,7 @@ class WalletTransactionSheet extends GetView<WalletController> {
                       SizedBox(height: 4),
                       TextFormField(
                         maxLines: 4,
-                        // controller: controller.nameController,
+                        controller: controller.descriptionController,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return "Nama dompet tidak boleh kosong";
@@ -615,7 +626,9 @@ class WalletTransactionSheet extends GetView<WalletController> {
                         ),
                         backgroundColor: Colors.red,
                       ),
-                      onPressed: () {},
+                      onPressed: () {
+                        controller.addTransaction('debit');
+                      },
 
                       child: Text("Pendapatan"),
                     ),
@@ -633,7 +646,9 @@ class WalletTransactionSheet extends GetView<WalletController> {
                         ),
                         backgroundColor: Colors.green,
                       ),
-                      onPressed: () {},
+                      onPressed: () {
+                        controller.addTransaction('credit');
+                      },
                       child: Text("Pendapatan"),
                     ),
                   ),

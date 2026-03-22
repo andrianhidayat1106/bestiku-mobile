@@ -1,3 +1,4 @@
+import 'package:bestieku/app/data/transaction_provider.dart';
 import 'package:bestieku/app/data/wallet_provider.dart';
 import 'package:bestieku/app/models/wallet_model.dart';
 import 'package:bestieku/app/modules/wallet/controllers/wallet_controller.dart';

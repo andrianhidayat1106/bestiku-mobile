@@ -14,4 +14,9 @@ class WalletModel {
     icon = json['icon'];
     color = json['color'];
   }
+
+  @override
+  String toString() {
+    return name ?? "";
+  }
 }

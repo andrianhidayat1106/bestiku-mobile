@@ -1,4 +1,8 @@
+import 'dart:ffi';
+
+import 'package:bestieku/app/data/transaction_provider.dart';
 import 'package:bestieku/app/data/wallet_provider.dart';
+import 'package:bestieku/app/models/transaction_model.dart';
 import 'package:bestieku/app/models/wallet_model.dart';
 import 'package:bestieku/app/modules/wallet/wallet_detail/controllers/wallet_detail_controller.dart';
 import 'package:flutter/animation.dart';
@@ -9,12 +13,15 @@ class WalletController extends GetxController {
   var listWallet = <WalletModel>[].obs;
 
   final WalletProvider _walletProvider = WalletProvider();
-
+  final TransactionProvider _transactionProvider = TransactionProvider();
   var isLoading = false.obs;
 
-  TextEditingController amount = TextEditingController();
-  TextEditingController description = TextEditingController();
+  TextEditingController totalAmountController = TextEditingController(
+    text: "0",
+  );
+  TextEditingController descriptionController = TextEditingController();
 
+  var selectWallet = Rxn<WalletModel>();
   @override
   void onInit() {
     super.onInit();
@@ -61,5 +68,28 @@ class WalletController extends GetxController {
     } finally {
       isLoading.value = false;
     }
+  }
+
+  Future<void> addTransaction(String transactionType) async {
+    try {
+      isLoading(true);
+
+      _transactionProvider.createTransactionRpc({
+        'p_type': transactionType,
+        'p_desc': descriptionController.text.trim(),
+        'p_amount': totalAmountController.text.trim(),
+        'p_wallet_id': selectWallet.value!.id ?? 0,
+      });
+      Get.back();
+      clearForm();
+    } finally {
+      isLoading(false);
+    }
+  }
+
+  void clearForm() {
+    selectWallet.value == null;
+    totalAmountController.clear();
+    descriptionController.clear();
   }
 }
