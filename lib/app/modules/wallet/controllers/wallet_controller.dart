@@ -11,7 +11,7 @@ import 'package:get/get.dart';
 
 class WalletController extends GetxController {
   var listWallet = <WalletModel>[].obs;
-
+  var listTransaction = <TransactionModel>[].obs;
   final WalletProvider _walletProvider = WalletProvider();
   final TransactionProvider _transactionProvider = TransactionProvider();
   var isLoading = false.obs;
@@ -26,6 +26,7 @@ class WalletController extends GetxController {
   void onInit() {
     super.onInit();
     fetchWallet();
+    fetchAllTransaction();
   }
 
   String listIcon(String? value) {
@@ -74,14 +75,25 @@ class WalletController extends GetxController {
     try {
       isLoading(true);
 
-      _transactionProvider.createTransactionRpc({
-        'p_type': transactionType,
-        'p_desc': descriptionController.text.trim(),
-        'p_amount': totalAmountController.text.trim(),
-        'p_wallet_id': selectWallet.value!.id ?? 0,
-      });
+      if (selectWallet.value != null) {
+        _transactionProvider.createTransactionRpc({
+          'p_type': transactionType,
+          'p_desc': descriptionController.text.trim(),
+          'p_amount': totalAmountController.text.trim(),
+          'p_wallet_id': selectWallet.value!.id,
+        });
+      }
+
       Get.back();
       clearForm();
+      Get.snackbar(
+        "Sukses",
+        "Dompet baru berhasil ditambahkan",
+        backgroundColor: Colors.green,
+        colorText: Colors.white,
+      );
+      fetchWallet();
+      fetchAllTransaction();
     } finally {
       isLoading(false);
     }
@@ -91,5 +103,18 @@ class WalletController extends GetxController {
     selectWallet.value == null;
     totalAmountController.clear();
     descriptionController.clear();
+  }
+
+  Future<void> fetchAllTransaction() async {
+    try {
+      isLoading.value = true;
+      final data = await _transactionProvider.getAllTransaction();
+
+      listTransaction.value = (data as List)
+          .map((item) => TransactionModel.fromJson(item))
+          .toList();
+    } finally {
+      isLoading.value = false;
+    }
   }
 }

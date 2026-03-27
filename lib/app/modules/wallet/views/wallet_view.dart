@@ -1,4 +1,5 @@
 import 'package:bestieku/app/core/theme/app_colors.dart';
+import 'package:bestieku/app/models/transaction_model.dart';
 import 'package:bestieku/app/models/wallet_model.dart';
 import 'package:bestieku/app/routes/app_pages.dart';
 import 'package:flutter/material.dart';
@@ -115,367 +116,237 @@ class WalletView extends GetView<WalletController> {
                     ),
                     SizedBox(height: 8),
                     Obx(() {
-                      return SizedBox(
-                        height: 145,
-                        child: ListView.separated(
-                          separatorBuilder: (context, index) {
-                            return SizedBox(width: 8);
-                          },
-                          itemCount: controller.listWallet.length,
-                          clipBehavior: Clip.none,
-                          scrollDirection: Axis.horizontal,
-                          itemBuilder: (context, index) {
-                            final WalletModel wallet =
-                                controller.listWallet[index];
-                            return Material(
-                              child: Ink(
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black12,
-                                      blurRadius: 4,
-                                    ),
-                                  ],
-                                ),
-                                child: InkWell(
-                                  onTap: () {
-                                    controller.selectWallet.value = wallet;
-                                    Get.bottomSheet(
-                                      isScrollControlled: true,
-                                      WalletTransactionSheet(),
-                                    );
-                                  },
-                                  child: Container(
-                                    padding: EdgeInsets.all(12),
-                                    width: 150,
-                                    height: 145,
+                      return Column(
+                        children: [
+                          SizedBox(
+                            height: 145,
+                            child: ListView.separated(
+                              separatorBuilder: (context, index) {
+                                return SizedBox(width: 8);
+                              },
+                              itemCount: controller.listWallet.length,
+                              clipBehavior: Clip.none,
+                              scrollDirection: Axis.horizontal,
+                              itemBuilder: (context, index) {
+                                final WalletModel wallet =
+                                    controller.listWallet[index];
+                                return Material(
+                                  child: Ink(
                                     decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(12),
                                       color: Colors.white,
                                       boxShadow: [
                                         BoxShadow(
-                                          color: Colors.black,
-                                          blurRadius: 0.2,
+                                          color: Colors.black12,
+                                          blurRadius: 4,
                                         ),
                                       ],
                                     ),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Row(
+                                    child: InkWell(
+                                      onTap: () {
+                                        controller.selectWallet.value = wallet;
+                                        Get.bottomSheet(
+                                          isScrollControlled: true,
+                                          WalletTransactionSheet(),
+                                        );
+                                      },
+                                      child: Container(
+                                        padding: EdgeInsets.all(12),
+                                        width: 150,
+                                        height: 145,
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(
+                                            12,
+                                          ),
+                                          color: Colors.white,
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: Colors.black,
+                                              blurRadius: 0.2,
+                                            ),
+                                          ],
+                                        ),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
                                           children: [
-                                            Container(
-                                              padding: EdgeInsets.all(12),
-                                              width: 50,
-                                              height: 50,
-                                              decoration: BoxDecoration(
-                                                color: Color(0xFFF7F7F7),
-                                                borderRadius:
-                                                    BorderRadius.circular(12),
-                                              ),
-                                              child: SvgPicture.asset(
-                                                controller.listIcon(
-                                                  wallet.icon,
-                                                ),
-                                                colorFilter: ColorFilter.mode(
-                                                  controller.listColor(
-                                                    wallet.color,
+                                            Row(
+                                              children: [
+                                                Container(
+                                                  padding: EdgeInsets.all(12),
+                                                  width: 50,
+                                                  height: 50,
+                                                  decoration: BoxDecoration(
+                                                    color: Color(0xFFF7F7F7),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                          12,
+                                                        ),
                                                   ),
-                                                  BlendMode.srcIn,
+                                                  child: SvgPicture.asset(
+                                                    controller.listIcon(
+                                                      wallet.icon,
+                                                    ),
+                                                    colorFilter:
+                                                        ColorFilter.mode(
+                                                          controller.listColor(
+                                                            wallet.color,
+                                                          ),
+                                                          BlendMode.srcIn,
+                                                        ),
+                                                  ),
                                                 ),
+                                                SizedBox(width: 6),
+                                                Expanded(
+                                                  child: Text(
+                                                    wallet.name.toString(),
+                                                    style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                            Divider(
+                                              thickness: 1,
+                                              color: Colors.grey,
+                                            ),
+                                            Text(
+                                              "Total",
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.w400,
+                                                color: Colors.grey,
+                                                fontSize: 12,
                                               ),
                                             ),
-                                            SizedBox(width: 6),
-                                            Expanded(
-                                              child: Text(
-                                                wallet.name.toString(),
-                                                style: TextStyle(
-                                                  fontWeight: FontWeight.w500,
-                                                ),
+                                            SizedBox(height: 4),
+                                            Text(
+                                              "Rp ${wallet.totalAmount}",
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                color: AppColors.lightOrange,
+                                                fontSize: 16,
                                               ),
                                             ),
                                           ],
                                         ),
-                                        Divider(
-                                          thickness: 1,
-                                          color: Colors.grey,
-                                        ),
-                                        Text(
-                                          "Total",
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.w400,
-                                            color: Colors.grey,
-                                            fontSize: 12,
-                                          ),
-                                        ),
-                                        SizedBox(height: 4),
-                                        Text(
-                                          "Rp ${wallet.totalAmount}",
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: AppColors.lightOrange,
-                                            fontSize: 16,
-                                          ),
-                                        ),
-                                      ],
+                                      ),
                                     ),
                                   ),
+                                );
+                              },
+                            ),
+                          ),
+                          SizedBox(height: 16),
+                          InkWell(
+                            onTap: () => Get.toNamed(Routes.WALLET_TRANSACTION),
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons.chevron_right,
+                                  color: AppColors
+                                      .primary, // Warna abu-abu agar tidak terlalu mencolok
+                                  size: 25,
                                 ),
-                              ),
-                            );
-                          },
-                        ),
+                                Text(
+                                  "Riwayat Transaksi",
+                                  style: TextStyle(fontWeight: FontWeight.w500),
+                                ),
+                              ],
+                            ),
+                          ),
+                          SizedBox(height: 8),
+
+                          ListView.separated(
+                            physics: NeverScrollableScrollPhysics(),
+                            padding: EdgeInsets.only(right: 16),
+                            shrinkWrap: true,
+                            itemBuilder: (context, index) {
+                              final TransactionModel transaction =
+                                  controller.listTransaction[index];
+
+                              return Container(
+                                height: 80,
+                                padding: EdgeInsets.all(16),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(12),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black,
+                                      blurRadius: 0.2,
+                                    ),
+                                  ],
+                                ),
+                                child: Row(
+                                  children: [
+                                    Container(
+                                      padding: EdgeInsets.all(12),
+                                      width: 50,
+                                      height: 50,
+                                      decoration: BoxDecoration(
+                                        color: Color(0xFFF7F7F7),
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                      child: SvgPicture.asset(
+                                        controller.listIcon(
+                                          transaction.wallet!.icon.toString(),
+                                        ),
+                                        colorFilter: ColorFilter.mode(
+                                          controller.listColor(
+                                            transaction.wallet!.color,
+                                          ),
+                                          BlendMode.srcIn,
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(width: 12),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            transaction.wallet!.name.toString(),
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
+
+                                          Text(
+                                            transaction.description
+                                                        .toString() ==
+                                                    ""
+                                                ? "(Tanpa Deskripsi)"
+                                                : transaction.description
+                                                      .toString(),
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.w400,
+                                              fontSize: 10,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    Text(
+                                      transaction.amount.toString(),
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.red,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
+                            separatorBuilder: (context, index) {
+                              return SizedBox(height: 12);
+                            },
+                            itemCount: controller.listTransaction.length,
+                          ),
+                        ],
                       );
                     }),
-                  ],
-                ),
-              ),
-              Padding(
-                padding: EdgeInsetsGeometry.only(left: 16, right: 16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(height: 16),
-                    InkWell(
-                      onTap: () => Get.toNamed(Routes.WALLET_TRANSACTION),
-                      child: Row(
-                        children: [
-                          Icon(
-                            Icons.chevron_right,
-                            color: AppColors
-                                .primary, // Warna abu-abu agar tidak terlalu mencolok
-                            size: 25,
-                          ),
-                          Text(
-                            "Riwayat Transaksi",
-                            style: TextStyle(fontWeight: FontWeight.w500),
-                          ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(height: 8),
-
-                    Container(
-                      height: 80,
-                      padding: EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(12),
-                        boxShadow: [
-                          BoxShadow(color: Colors.black, blurRadius: 0.2),
-                        ],
-                      ),
-                      child: Row(
-                        children: [
-                          Container(
-                            padding: EdgeInsets.all(12),
-                            width: 50,
-                            height: 50,
-                            decoration: BoxDecoration(
-                              color: Color(0xFFF7F7F7),
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: SvgPicture.asset(
-                              "assets/images/icons/wallet.svg",
-                            ),
-                          ),
-                          SizedBox(width: 12),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  "BANK BCA",
-                                  style: TextStyle(fontWeight: FontWeight.w500),
-                                ),
-
-                                Text(
-                                  "Untuk Beli Rokok",
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w400,
-                                    fontSize: 10,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Text(
-                            "- Rp 36.000",
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.red,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(height: 12),
-                    Container(
-                      height: 80,
-                      padding: EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(12),
-                        boxShadow: [
-                          BoxShadow(color: Colors.black, blurRadius: 0.2),
-                        ],
-                      ),
-                      child: Row(
-                        children: [
-                          Container(
-                            padding: EdgeInsets.all(12),
-                            width: 50,
-                            height: 50,
-                            decoration: BoxDecoration(
-                              color: Color(0xFFF7F7F7),
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: SvgPicture.asset(
-                              "assets/images/icons/wallet.svg",
-                            ),
-                          ),
-                          SizedBox(width: 12),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  "BANK BCA",
-                                  style: TextStyle(fontWeight: FontWeight.w500),
-                                ),
-
-                                Text(
-                                  "Untuk Beli Rokok",
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w400,
-                                    fontSize: 10,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Text(
-                            "- Rp 36.000",
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.red,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(height: 12),
-                    Container(
-                      height: 80,
-                      padding: EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(12),
-                        boxShadow: [
-                          BoxShadow(color: Colors.black, blurRadius: 0.2),
-                        ],
-                      ),
-                      child: Row(
-                        children: [
-                          Container(
-                            padding: EdgeInsets.all(12),
-                            width: 50,
-                            height: 50,
-                            decoration: BoxDecoration(
-                              color: Color(0xFFF7F7F7),
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: SvgPicture.asset(
-                              "assets/images/icons/wallet.svg",
-                            ),
-                          ),
-                          SizedBox(width: 12),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  "BANK BCA",
-                                  style: TextStyle(fontWeight: FontWeight.w500),
-                                ),
-
-                                Text(
-                                  "Untuk Beli Rokok",
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w400,
-                                    fontSize: 10,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Text(
-                            "- Rp 36.000",
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.red,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(height: 12),
-                    Container(
-                      height: 80,
-                      padding: EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(12),
-                        boxShadow: [
-                          BoxShadow(color: Colors.black, blurRadius: 0.2),
-                        ],
-                      ),
-                      child: Row(
-                        children: [
-                          Container(
-                            padding: EdgeInsets.all(12),
-                            width: 50,
-                            height: 50,
-                            decoration: BoxDecoration(
-                              color: Color(0xFFF7F7F7),
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: SvgPicture.asset(
-                              "assets/images/icons/wallet.svg",
-                            ),
-                          ),
-                          SizedBox(width: 12),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  "BANK BCA",
-                                  style: TextStyle(fontWeight: FontWeight.w500),
-                                ),
-
-                                Text(
-                                  "Untuk Beli Rokok",
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w400,
-                                    fontSize: 10,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Text(
-                            "- Rp 36.000",
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.red,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
                   ],
                 ),
               ),
@@ -627,10 +498,10 @@ class WalletTransactionSheet extends GetView<WalletController> {
                         backgroundColor: Colors.red,
                       ),
                       onPressed: () {
-                        controller.addTransaction('debit');
+                        controller.addTransaction('credit');
                       },
 
-                      child: Text("Pendapatan"),
+                      child: Text("Pengeluaran"),
                     ),
                   ),
                   SizedBox(width: 12),
@@ -647,7 +518,7 @@ class WalletTransactionSheet extends GetView<WalletController> {
                         backgroundColor: Colors.green,
                       ),
                       onPressed: () {
-                        controller.addTransaction('credit');
+                        controller.addTransaction('debit');
                       },
                       child: Text("Pendapatan"),
                     ),

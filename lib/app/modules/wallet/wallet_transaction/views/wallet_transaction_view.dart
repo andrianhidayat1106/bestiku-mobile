@@ -5,6 +5,7 @@ import 'package:dropdown_flutter/custom_dropdown.dart';
 import 'package:get/get.dart';
 import 'package:get/get_connect/http/src/utils/utils.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:table_calendar/table_calendar.dart';
 import '../controllers/wallet_transaction_controller.dart';
 
 class WalletTransactionView extends GetView<WalletTransactionController> {
@@ -13,7 +14,6 @@ class WalletTransactionView extends GetView<WalletTransactionController> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.primary,
-
       body: SafeArea(
         bottom: false,
         child: Column(
@@ -40,6 +40,7 @@ class WalletTransactionView extends GetView<WalletTransactionController> {
                       ),
                     ),
                   ),
+
                   Text(
                     'Daftar Transaksi',
                     style: TextStyle(
@@ -264,6 +265,7 @@ class WalletTransactionView extends GetView<WalletTransactionController> {
                             color: AppColors.primary,
                           ),
                         ),
+
                         SizedBox(height: 4),
                         Container(
                           decoration: BoxDecoration(

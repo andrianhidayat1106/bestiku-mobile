@@ -1,6 +1,8 @@
+import 'package:bestieku/app/models/wallet_model.dart';
+
 class TransactionModel {
   int? id;
-  int? walletId;
+  WalletModel? wallet;
   int? balanceAfter;
   int? amount;
   String? transactionType;
@@ -8,7 +10,7 @@ class TransactionModel {
 
   TransactionModel({
     this.id,
-    this.walletId,
+    this.wallet,
     this.balanceAfter,
     this.amount,
     this.transactionType,
@@ -17,7 +19,9 @@ class TransactionModel {
 
   TransactionModel.fromJson(Map<String, dynamic> json) {
     id = json['id'];
-    walletId = json['wallet_id'];
+    wallet = json['wallet'] != null
+        ? WalletModel.fromJson(json['wallet'])
+        : null;
     balanceAfter = json['balance_after'];
     amount = json['amount'];
     transactionType = json['transactionType'];
