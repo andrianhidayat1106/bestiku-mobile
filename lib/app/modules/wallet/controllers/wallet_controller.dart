@@ -109,7 +109,7 @@ class WalletController extends GetxController {
     try {
       isLoading.value = true;
       final data = await _transactionProvider.getAllTransaction();
-
+      // print(data);
       listTransaction.value = (data as List)
           .map((item) => TransactionModel.fromJson(item))
           .toList();

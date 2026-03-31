@@ -24,7 +24,12 @@ class TransactionModel {
         : null;
     balanceAfter = json['balance_after'];
     amount = json['amount'];
-    transactionType = json['transactionType'];
+    transactionType = json['transaction_type'];
     description = json['description'];
+  }
+
+  @override
+  String toString() {
+    return 'Transaction(type: $transactionType, amount: $amount)';
   }
 }
