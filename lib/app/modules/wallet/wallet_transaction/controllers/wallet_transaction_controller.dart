@@ -8,8 +8,8 @@ import 'package:intl/intl.dart';
 
 class WalletTransactionController extends GetxController {
   var focusedDay = DateTime.now().obs;
-  var rangeStart = Rxn<DateTime>(DateTime.now());
-  var rangeEnd = Rxn<DateTime>(DateTime.now());
+  var rangeStart = Rxn<DateTime>();
+  var rangeEnd = Rxn<DateTime>();
   var calendarFormat = CalendarFormat.month.obs;
   var listWalletWithAll = <WalletModel>[].obs;
   var selectWallet = Rxn<WalletModel>();
@@ -26,6 +26,13 @@ class WalletTransactionController extends GetxController {
   void onInit() {
     super.onInit();
 
+    DateTime now = DateTime.now();
+
+    rangeStart = Rxn<DateTime>(DateTime(now.year, now.month, now.day, 0, 0, 0));
+    rangeEnd = Rxn<DateTime>(
+      DateTime(now.year, now.month, now.day, 23, 59, 59),
+    );
+
     listWalletWithAll.clear();
     listWalletWithAll.add(WalletModel(id: 0, name: "Semua Dompet"));
     ever(walletController.listWallet, (List<WalletModel> walletsFromApi) {
@@ -33,6 +40,9 @@ class WalletTransactionController extends GetxController {
         WalletModel(id: 0, name: "Semua Dompet"),
         ...walletsFromApi, // Spread operator untuk menggabungkan data API
       ]);
+    });
+    everAll([rangeStart, rangeEnd, selectWallet], (_) {
+      getTransaction();
     });
     walletController.fetchWallet();
     getTransaction();
@@ -64,9 +74,7 @@ class WalletTransactionController extends GetxController {
     final wallet = selectWallet.value;
 
     if (start == null || end == null || wallet == null) return;
-    print(start);
-    print(end);
-    print(listTransaction);
+
     try {
       isLoading.value = true;
 

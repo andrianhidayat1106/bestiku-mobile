@@ -23,4 +23,14 @@ class WalletProvider extends GetConnect {
   Future<void> deleteWallet(int id) async {
     await _supabase.from("wallet").delete().eq("id", id);
   }
+
+  Future<double> getAllWalletAmount() async {
+    final data = await _supabase.from("wallet").select();
+    final double totalAllAmount = data.fold(
+      0,
+      (sum, item) => sum + (item['total_amount'] ?? 0),
+    );
+
+    return totalAllAmount;
+  }
 }

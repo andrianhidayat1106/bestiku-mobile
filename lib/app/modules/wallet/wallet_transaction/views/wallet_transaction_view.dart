@@ -110,7 +110,7 @@ class WalletTransactionView extends GetView<WalletTransactionController> {
                                     child: Center(
                                       child: Obx(
                                         () => Text(
-                                          "+${controller.totalDebit}",
+                                          "+${controller.totalDebit.value}",
                                           style: TextStyle(
                                             color: Colors.green,
                                             fontSize: 25,
@@ -157,7 +157,7 @@ class WalletTransactionView extends GetView<WalletTransactionController> {
                                     child: Center(
                                       child: Obx(
                                         () => Text(
-                                          "-${controller.totalDebit}",
+                                          "-${controller.totalCredit.value}",
                                           style: TextStyle(
                                             color: Colors.red,
                                             fontSize: 25,

@@ -44,7 +44,8 @@ class TransactionProvider extends GetConnect {
       59, // Menit 59
       59, //
     ).toIso8601String();
-
+    print(startDate);
+    print(endDate);
     try {
       var query = _supabase
           .from('transaction')

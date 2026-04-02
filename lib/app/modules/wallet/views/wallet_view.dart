@@ -2,6 +2,8 @@ import 'package:bestieku/app/core/theme/app_colors.dart';
 import 'package:bestieku/app/models/transaction_model.dart';
 import 'package:bestieku/app/models/wallet_model.dart';
 import 'package:bestieku/app/routes/app_pages.dart';
+import 'package:bestieku/utils/currency_format.dart';
+import 'package:bestieku/utils/currency_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -59,12 +61,14 @@ class WalletView extends GetView<WalletController> {
                             color: AppColors.accent,
                             borderRadius: BorderRadius.circular(12),
                           ),
-                          child: Text(
-                            "Rp 1.2500.000",
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                              fontSize: 20,
+                          child: Obx(
+                            () => Text(
+                              "${CurrencyHelper.formatRupiah(controller.totalAllWalletAmount.value)}",
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                                fontSize: 20,
+                              ),
                             ),
                           ),
                         ),
@@ -221,7 +225,7 @@ class WalletView extends GetView<WalletController> {
                                             ),
                                             SizedBox(height: 4),
                                             Text(
-                                              "Rp ${wallet.totalAmount}",
+                                              "${CurrencyHelper.formatRupiah(wallet.totalAmount)}",
                                               style: TextStyle(
                                                 fontWeight: FontWeight.bold,
                                                 color: AppColors.lightOrange,
@@ -328,13 +332,27 @@ class WalletView extends GetView<WalletController> {
                                         ],
                                       ),
                                     ),
-                                    Text(
-                                      transaction.amount.toString(),
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.red,
-                                      ),
-                                    ),
+                                    transaction.transactionType == "credit"
+                                        ? Text(
+                                            "-" +
+                                                CurrencyHelper.formatRupiah(
+                                                  transaction.amount,
+                                                ),
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.red,
+                                            ),
+                                          )
+                                        : Text(
+                                            "+" +
+                                                CurrencyHelper.formatRupiah(
+                                                  transaction.amount,
+                                                ),
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.green,
+                                            ),
+                                          ),
                                   ],
                                 ),
                               );
@@ -436,6 +454,7 @@ class WalletTransactionSheet extends GetView<WalletController> {
                         // 2. Mencegah input selain angka di level sistem
                         inputFormatters: [
                           FilteringTextInputFormatter.digitsOnly,
+                          CurrencyFormat(),
                         ],
                         controller: controller.totalAmountController,
                         validator: (value) {

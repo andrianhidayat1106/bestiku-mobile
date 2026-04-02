@@ -8,6 +8,7 @@ import 'package:bestieku/app/modules/wallet/wallet_detail/controllers/wallet_det
 import 'package:flutter/animation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get/get_connect/http/src/utils/utils.dart';
 
 class WalletController extends GetxController {
   var listWallet = <WalletModel>[].obs;
@@ -15,7 +16,7 @@ class WalletController extends GetxController {
   final WalletProvider _walletProvider = WalletProvider();
   final TransactionProvider _transactionProvider = TransactionProvider();
   var isLoading = false.obs;
-
+  var totalAllWalletAmount = 0.0.obs;
   TextEditingController totalAmountController = TextEditingController(
     text: "0",
   );
@@ -27,6 +28,7 @@ class WalletController extends GetxController {
     super.onInit();
     fetchWallet();
     fetchAllTransaction();
+    fetchAllWalletAmount();
   }
 
   String listIcon(String? value) {
@@ -115,6 +117,15 @@ class WalletController extends GetxController {
           .toList();
     } finally {
       isLoading.value = false;
+    }
+  }
+
+  Future<void> fetchAllWalletAmount() async {
+    try {
+      final data = await _walletProvider.getAllWalletAmount();
+      totalAllWalletAmount.value = data;
+    } catch (e) {
+      print(e);
     }
   }
 }

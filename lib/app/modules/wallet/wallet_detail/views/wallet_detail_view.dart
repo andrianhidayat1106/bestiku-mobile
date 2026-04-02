@@ -1,5 +1,6 @@
 import 'package:bestieku/app/core/theme/app_colors.dart';
 import 'package:bestieku/app/models/wallet_model.dart';
+import 'package:bestieku/utils/currency_helper.dart';
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
@@ -189,7 +190,7 @@ class WalletDetailView extends GetView<WalletDetailController> {
                                                   ),
                                                 ),
                                                 Text(
-                                                  "Total Uang : ${wallet.totalAmount}",
+                                                  "Total Uang : ${CurrencyHelper.formatRupiah(wallet.totalAmount)}",
                                                   style: TextStyle(
                                                     fontWeight: FontWeight.w400,
                                                     fontSize: 10,
