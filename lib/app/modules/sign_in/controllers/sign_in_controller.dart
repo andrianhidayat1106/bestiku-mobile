@@ -27,7 +27,7 @@ class SignInController extends GetxController {
       );
 
       if (response.user != null) {
-        Get.offAllNamed(Routes.WALLET);
+        Get.offAllNamed(Routes.MAIN);
       }
     } catch (e) {
       Get.snackbar(

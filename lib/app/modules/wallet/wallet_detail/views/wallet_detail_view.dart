@@ -1,5 +1,6 @@
 import 'package:bestieku/app/core/theme/app_colors.dart';
 import 'package:bestieku/app/models/wallet_model.dart';
+import 'package:bestieku/utils/currency_format.dart';
 import 'package:bestieku/utils/currency_helper.dart';
 import 'package:flutter/material.dart';
 
@@ -289,6 +290,7 @@ class WalletFormSheet extends GetView<WalletDetailController> {
                       SizedBox(height: 4),
                       TextFormField(
                         controller: controller.amountController,
+
                         decoration: InputDecoration(
                           focusedErrorBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
@@ -302,6 +304,7 @@ class WalletFormSheet extends GetView<WalletDetailController> {
                         // 2. Batasi input hanya angka (membutuhkan import 'package:flutter/services.dart')
                         inputFormatters: [
                           FilteringTextInputFormatter.digitsOnly,
+                          CurrencyFormat(),
                         ],
                       ),
                       SizedBox(height: 8),

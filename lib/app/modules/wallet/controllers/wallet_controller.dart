@@ -5,6 +5,7 @@ import 'package:bestieku/app/data/wallet_provider.dart';
 import 'package:bestieku/app/models/transaction_model.dart';
 import 'package:bestieku/app/models/wallet_model.dart';
 import 'package:bestieku/app/modules/wallet/wallet_detail/controllers/wallet_detail_controller.dart';
+import 'package:bestieku/utils/currency_format.dart';
 import 'package:flutter/animation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -17,9 +18,7 @@ class WalletController extends GetxController {
   final TransactionProvider _transactionProvider = TransactionProvider();
   var isLoading = false.obs;
   var totalAllWalletAmount = 0.0.obs;
-  TextEditingController totalAmountController = TextEditingController(
-    text: "0",
-  );
+  TextEditingController totalAmountController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
 
   var selectWallet = Rxn<WalletModel>();
@@ -81,7 +80,9 @@ class WalletController extends GetxController {
         _transactionProvider.createTransactionRpc({
           'p_type': transactionType,
           'p_desc': descriptionController.text.trim(),
-          'p_amount': totalAmountController.text.trim(),
+          'p_amount': CurrencyFormat.parseToInt(
+            totalAmountController.text.trim(),
+          ),
           'p_wallet_id': selectWallet.value!.id,
         });
       }

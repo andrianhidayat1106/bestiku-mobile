@@ -1,23 +1,17 @@
+import 'package:bestieku/app/routes/app_pages.dart';
 import 'package:get/get.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ProfileController extends GetxController {
-  //TODO: Implement ProfileController
+  final _supabase = Supabase.instance.client;
+  User? get currentUser => _supabase.auth.currentUser;
 
-  final count = 0.obs;
-  @override
-  void onInit() {
-    super.onInit();
+  Future<void> logout() async {
+    try {
+      await _supabase.auth.signOut();
+      Get.offAllNamed(Routes.SIGN_IN);
+    } catch (e) {
+      Get.snackbar("Error", "Gagal logout: $e");
+    }
   }
-
-  @override
-  void onReady() {
-    super.onReady();
-  }
-
-  @override
-  void onClose() {
-    super.onClose();
-  }
-
-  void increment() => count.value++;
 }

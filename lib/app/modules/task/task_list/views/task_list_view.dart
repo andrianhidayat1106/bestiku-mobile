@@ -45,7 +45,7 @@ class TaskListView extends GetView<TaskListController> {
                     ),
                   ),
                   Text(
-                    'Detail Project',
+                    'Daftar Tugas',
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       color: Colors.white,

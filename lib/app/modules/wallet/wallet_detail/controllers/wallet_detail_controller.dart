@@ -2,6 +2,8 @@ import 'package:bestieku/app/data/transaction_provider.dart';
 import 'package:bestieku/app/data/wallet_provider.dart';
 import 'package:bestieku/app/models/wallet_model.dart';
 import 'package:bestieku/app/modules/wallet/controllers/wallet_controller.dart';
+import 'package:bestieku/utils/currency_format.dart';
+import 'package:bestieku/utils/currency_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -14,7 +16,7 @@ class WalletDetailController extends GetxController {
 
   int? selectedWalletId;
   final nameController = TextEditingController();
-  final amountController = TextEditingController(text: "0");
+  final amountController = TextEditingController();
   final formKey = GlobalKey<FormState>();
   var selectColorName = 'green'.obs;
   var selectIconName = 'wallet'.obs;
@@ -50,7 +52,7 @@ class WalletDetailController extends GetxController {
 
       final Map<String, dynamic> data = {
         'name': nameController.text.trim(),
-        'total_amount': int.parse(amountController.text.trim()),
+        'total_amount': CurrencyFormat.parseToInt(amountController.text),
         'color': selectColorName.value,
         'icon': selectIconName.value,
       };
@@ -101,7 +103,8 @@ class WalletDetailController extends GetxController {
 
   void prepareEdit(WalletModel wallet) {
     nameController.text = wallet.name.toString();
-    amountController.text = wallet.totalAmount.toString();
+    amountController.text =
+        "${CurrencyHelper.formatRupiah(wallet.totalAmount)}";
     selectColorName.value = wallet.color.toString();
     selectIconName.value = wallet.icon.toString();
     selectedWalletId = wallet.id;
@@ -109,7 +112,7 @@ class WalletDetailController extends GetxController {
 
   void prepareAdd() {
     nameController.text = "";
-    amountController.text = "0";
+    amountController.text = "Rp 0";
     selectColorName.value = "green";
     selectIconName.value = "wallet";
     selectedWalletId = null;
@@ -126,7 +129,7 @@ class WalletDetailController extends GetxController {
       isLoading.value = true;
       Map<String, dynamic> data = {
         'name': nameController.text.trim(),
-        'total_amount': int.parse(amountController.text.trim()),
+        'total_amount': CurrencyFormat.parseToInt(amountController.text.trim()),
         'color': selectColorName.value,
         'icon': selectIconName.value,
       };

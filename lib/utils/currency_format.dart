@@ -7,17 +7,28 @@ class CurrencyFormat extends TextInputFormatter {
     TextEditingValue oldValue,
     TextEditingValue newValue,
   ) {
-    // Jika input kosong
-    if (newValue.selection.baseOffset == 0) {
-      return newValue;
+    // 1. Jika input benar-benar kosong, kembalikan teks "Rp 0"
+    if (newValue.text.isEmpty) {
+      return TextEditingValue(
+        text: 'Rp 0',
+        selection: TextSelection.collapsed(offset: 4), // Kursor setelah "Rp 0"
+      );
     }
 
-    // Mengambil angka saja dari input
-    double value = double.parse(
-      newValue.text.replaceAll(RegExp(r'[^0-9]'), ''),
-    );
+    // 2. Cegah error jika user memasukkan karakter yang bukan angka
+    String onlyNumbers = newValue.text.replaceAll(RegExp(r'[^0-9]'), '');
 
-    // Format menjadi Rupiah
+    // Jika setelah dihapus karakter non-angka ternyata kosong, balikkan ke Rp 0
+    if (onlyNumbers.isEmpty) {
+      return TextEditingValue(
+        text: 'Rp 0',
+        selection: TextSelection.collapsed(offset: 4),
+      );
+    }
+
+    // 3. Parsing ke double (Gunakan tryParse agar lebih aman)
+    double value = double.parse(onlyNumbers);
+
     final formatter = NumberFormat.currency(
       locale: 'id',
       symbol: 'Rp ',
