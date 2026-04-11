@@ -1,7 +1,7 @@
 import 'package:bestieku/app/core/theme/app_colors.dart';
 import 'package:bestieku/app/routes/app_pages.dart';
 import 'package:flutter/material.dart';
-
+import 'package:table_calendar/table_calendar.dart';
 import 'package:get/get.dart';
 import 'package:get/get_connect/http/src/utils/utils.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -76,221 +76,186 @@ class TaskListView extends GetView<TaskListController> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        Text(
-                          "Jenis Tugas",
-                          style: TextStyle(
-                            fontWeight: FontWeight.w500,
-                            color: AppColors.primary,
-                          ),
-                        ),
-                        SizedBox(height: 4),
-                        Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(16),
-                            boxShadow: [
-                              BoxShadow(color: Colors.black, blurRadius: 0.2),
-                            ],
-                          ),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(16),
-
-                            child: DropdownFlutter(
-                              decoration: CustomDropdownDecoration(
-                                listItemStyle: TextStyle(
-                                  fontWeight: FontWeight.w400,
-                                ),
-                                headerStyle: TextStyle(
-                                  fontWeight: FontWeight.w400,
-                                ),
-                              ),
-                              hintText: "Semua Dompet",
-                              items: ['Semua Dompet'],
-                              onChanged: (value) {
-                                print("selected $value");
-                              },
-                            ),
-                          ),
-                        ),
                         SizedBox(height: 8),
-
-                        SizedBox(height: 8),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            // Dari Tanggal
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  "Dari Tanggal",
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w500,
-                                    color: AppColors.primary,
-                                  ),
-                                ),
-                                SizedBox(height: 4),
-                                Container(
-                                  width: 150,
-                                  height: 50,
-                                  padding: EdgeInsets.symmetric(horizontal: 16),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(12),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.black,
-                                        blurRadius: 0.2,
-                                      ),
-                                    ],
-                                  ),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Icon(
-                                        Icons.calendar_today,
-                                        size: 18,
-                                        color: AppColors.primary,
-                                      ),
-                                      Text(
-                                        "27/02/2026", // dummy text
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                          color: Colors.black87,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-
-                            // Sampai Tanggal
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  "Sampai Tanggal",
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w500,
-                                    color: AppColors.primary,
-                                  ),
-                                ),
-                                SizedBox(height: 4),
-                                Container(
-                                  width: 150,
-                                  height: 50,
-                                  padding: EdgeInsets.symmetric(horizontal: 16),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(12),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.black,
-                                        blurRadius: 0.2,
-                                      ),
-                                    ],
-                                  ),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Icon(
-                                        Icons.calendar_today,
-                                        size: 18,
-                                        color: AppColors.primary,
-                                      ),
-                                      Text(
-                                        "27/03/2026", // dummy text
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                          color: Colors.black87,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: 24),
-
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.center,
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              "Daftar Tugas",
+                              "Rentang Tanggal",
                               style: TextStyle(
                                 fontWeight: FontWeight.w500,
                                 color: AppColors.primary,
                               ),
                             ),
-                            ElevatedButton(
-                              onPressed: () {},
-                              style: ElevatedButton.styleFrom(
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: 24,
-                                  vertical: 16,
+                            SizedBox(height: 4),
+                            GestureDetector(
+                              onTap: () {
+                                Get.bottomSheet(CalendarView());
+                              },
+                              child: Container(
+                                width: double.infinity,
+                                height: 50,
+                                padding: EdgeInsets.symmetric(horizontal: 16),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(12),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black,
+                                      blurRadius: 0.2,
+                                    ),
+                                  ],
+                                ),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Icon(
+                                      Icons.calendar_today,
+                                      size: 18,
+                                      color: AppColors.primary,
+                                    ),
+                                    Obx(
+                                      () => Text(
+                                        controller.rangeText, // dummy text
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          color: Colors.black87,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
-                              child: Text("Tambah Tugas"),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 24),
+                        Text(
+                          "Daftar Tugas",
+                          style: TextStyle(
+                            fontWeight: FontWeight.w500,
+                            color: AppColors.primary,
+                          ),
+                        ),
+                        SizedBox(height: 12),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Expanded(
+                              child: Obx(
+                                () => ElevatedButton(
+                                  onPressed: () {
+                                    bool isDelete = controller.isDelete.value;
+                                    if (isDelete) {
+                                      controller.isDelete(false);
+                                      return;
+                                    }
+
+                                    controller.isDelete(true);
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: controller.isDelete.value
+                                        ? Colors.red
+                                        : AppColors.primary,
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: 12,
+
+                                      vertical: 16,
+                                    ),
+                                  ),
+                                  child: Text("Hapus Tugas"),
+                                ),
+                              ),
+                            ),
+                            SizedBox(width: 12),
+                            Expanded(
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  Get.bottomSheet(FormTaskView());
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.green,
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: 12,
+
+                                    vertical: 16,
+                                  ),
+                                ),
+                                child: Text("Tambah Tugas"),
+                              ),
                             ),
                           ],
                         ),
                         SizedBox(height: 16),
-                        Container(
-                          height: 80,
-                          padding: EdgeInsets.all(16),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(12),
-                            boxShadow: [
-                              BoxShadow(color: Colors.black, blurRadius: 0.2),
-                            ],
-                          ),
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  "Tugas Bahasa Inggris",
-                                  style: TextStyle(
-                                    color: AppColors.primary,
-                                    fontSize: 16,
-                                  ),
+                        Obx(() {
+                          bool isDelete = controller.isDelete.value;
+
+                          return ListView.separated(
+                            itemBuilder: (context, index) {
+                              var task = controller.listTask[index];
+                              return Container(
+                                height: 80,
+                                padding: EdgeInsets.all(16),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(12),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black,
+                                      blurRadius: 0.2,
+                                    ),
+                                  ],
                                 ),
-                              ),
-                              Checkbox(value: false, onChanged: (value) {}),
-                            ],
-                          ),
-                        ),
-                        SizedBox(height: 12),
-                        Container(
-                          height: 80,
-                          padding: EdgeInsets.all(16),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(12),
-                            boxShadow: [
-                              BoxShadow(color: Colors.black, blurRadius: 0.2),
-                            ],
-                          ),
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  "Tugas Bahasa Inggris",
-                                  style: TextStyle(
-                                    color: AppColors.primary,
-                                    fontSize: 16,
-                                  ),
+                                child: Row(
+                                  children: [
+                                    Expanded(
+                                      child: Text(
+                                        task.name,
+                                        style: TextStyle(
+                                          color: AppColors.primary,
+                                          fontSize: 16,
+                                        ),
+                                      ),
+                                    ),
+                                    isDelete
+                                        ? IconButton(
+                                            style: IconButton.styleFrom(
+                                              backgroundColor: Colors
+                                                  .red, // Latar belakang tombol jadi merah
+                                              foregroundColor: Colors
+                                                  .white, // Warna icon jadi putih supaya kontras
+                                            ),
+                                            onPressed: () {
+                                              // Panggil fungsi hapus dari controller kamu
+                                              controller.deleteTask(task.id);
+                                            },
+                                            icon: const Icon(
+                                              Icons.delete,
+                                              color: Colors.white,
+                                            ),
+                                          )
+                                        : Checkbox(
+                                            value: task.finishedAt == null
+                                                ? false
+                                                : true,
+                                            onChanged: (value) {
+                                              controller.changeFinishedTask(
+                                                index,
+                                              );
+                                            },
+                                          ),
+                                  ],
                                 ),
-                              ),
-                              Checkbox(value: false, onChanged: (value) {}),
-                            ],
-                          ),
-                        ),
+                              );
+                            },
+                            shrinkWrap: true,
+                            separatorBuilder: (txt, index) =>
+                                SizedBox(height: 12),
+                            itemCount: controller.listTask.length,
+                          );
+                        }),
                       ],
                     ),
                   ),
@@ -299,6 +264,127 @@ class TaskListView extends GetView<TaskListController> {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class FormTaskView extends StatelessWidget {
+  final TaskListController taskListController = Get.put(TaskListController());
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: Get.height * 0.6,
+      child: Container(
+        padding: EdgeInsets.all(16),
+        width: double.infinity,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(50),
+            topRight: Radius.circular(50),
+          ),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Center(
+              child: Text(
+                "Tambah Tugas",
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.primary,
+                ),
+              ),
+            ),
+            SizedBox(height: 24),
+            Text("Nama Tugas"),
+            SizedBox(height: 4),
+            Expanded(
+              child: Form(
+                child: TextFormField(
+                  controller: taskListController.nameController,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return "Nama dompet tidak boleh kosong";
+                    }
+                    return null;
+                  },
+                  decoration: InputDecoration(
+                    focusedErrorBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(color: Colors.red, width: 2),
+                    ),
+                    errorBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(color: Colors.red, width: 1),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(
+              width: double.infinity,
+              child: Obx(() {
+                var isLoading = taskListController.isLoading.value;
+                return ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.only(
+                        topRight: Radius.circular(50),
+                        bottomLeft: Radius.circular(50),
+                        topLeft: Radius.circular(50),
+                        bottomRight: Radius.circular(50),
+                      ),
+                    ),
+                    backgroundColor: AppColors.primary,
+                    padding: EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+                  ),
+                  onPressed: () =>
+                      isLoading ? null : taskListController.addTask(),
+                  child: Text("Tambah"),
+                );
+              }),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class CalendarView extends StatelessWidget {
+  final TaskListController taskListController = Get.put(TaskListController());
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: Get.height * 0.5,
+      child: Container(
+        padding: EdgeInsets.all(16),
+        width: double.infinity,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(50),
+            topRight: Radius.circular(50),
+          ),
+        ),
+        child: Obx(() {
+          return TableCalendar(
+            focusedDay: taskListController.focusedDay.value,
+            firstDay: DateTime.utc(2026, 1, 1),
+            lastDay: DateTime.utc(2030, 12, 31),
+            availableCalendarFormats: const {CalendarFormat.month: 'Month'},
+            rangeStartDay: taskListController.rangeStart.value,
+            rangeEndDay: taskListController.rangeEnd.value,
+            calendarFormat: taskListController.calendarFormat.value,
+            rangeSelectionMode: RangeSelectionMode.enforced,
+            onRangeSelected: taskListController.onRangeSelected,
+            onFormatChanged: (format) =>
+                taskListController.calendarFormat.value = format,
+          );
+        }),
       ),
     );
   }
