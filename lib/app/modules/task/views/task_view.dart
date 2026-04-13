@@ -1,4 +1,5 @@
 import 'package:bestieku/app/core/theme/app_colors.dart';
+import 'package:bestieku/app/models/project_model.dart';
 import 'package:bestieku/app/routes/app_pages.dart';
 import 'package:flutter/material.dart';
 
@@ -137,7 +138,9 @@ class TaskView extends GetView<TaskController> {
                   children: [
                     SizedBox(height: 24),
                     InkWell(
-                      onTap: () => Get.toNamed(Routes.TASK_PROJECT),
+                      onTap: () => Get.toNamed(
+                        Routes.TASK_PROJECT,
+                      )?.then((value) => controller.getAllProject()),
                       child: Row(
                         children: [
                           Icon(
@@ -154,155 +157,79 @@ class TaskView extends GetView<TaskController> {
                       ),
                     ),
                     SizedBox(height: 16),
+
                     SizedBox(
                       height: 160,
-                      child: ListView(
-                        clipBehavior: Clip.none,
-                        scrollDirection: Axis.horizontal,
-                        children: [
-                          Container(
-                            padding: EdgeInsets.all(12),
-                            width: 130,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(12),
-                              color: const Color.fromARGB(255, 83, 158, 84),
-                              boxShadow: [
-                                BoxShadow(color: Colors.black, blurRadius: 0.2),
-                              ],
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  "Belajar Mobile Flutter",
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      "Progress 60%",
-                                      style: TextStyle(
-                                        fontSize: 10,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                    SizedBox(height: 4),
-                                    ClipRRect(
-                                      borderRadius: BorderRadius.circular(20),
-                                      child: LinearProgressIndicator(
-                                        value: 0.6,
-                                        minHeight: 8,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-                          SizedBox(width: 10),
-                          Container(
-                            padding: EdgeInsets.all(12),
-                            width: 130,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(12),
-                              color: const Color.fromARGB(255, 97, 97, 185),
-                              boxShadow: [
-                                BoxShadow(color: Colors.black, blurRadius: 0.2),
-                              ],
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  "Belajar Web React",
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      "Progress 40%",
-                                      style: TextStyle(
-                                        fontSize: 10,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                    SizedBox(height: 4),
-                                    ClipRRect(
-                                      borderRadius: BorderRadius.circular(20),
-                                      child: LinearProgressIndicator(
-                                        value: 0.4,
-                                        minHeight: 8,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
 
-                          SizedBox(width: 10),
-                          Container(
-                            padding: EdgeInsets.all(12),
-                            width: 130,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(12),
-                              color: const Color.fromARGB(255, 97, 185, 147),
-                              boxShadow: [
-                                BoxShadow(color: Colors.black, blurRadius: 0.2),
-                              ],
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  "Belajar Web Backend",
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white,
+                      child: Obx(() {
+                        if (controller.listProject.isEmpty) {
+                          return const Center(
+                            child: Text("No projects available"),
+                          );
+                        }
+                        return ListView.separated(
+                          scrollDirection: Axis.horizontal,
+                          itemBuilder: (context, index) {
+                            ProjectModel project =
+                                controller.listProject[index];
+                            return Container(
+                              padding: EdgeInsets.all(12),
+                              width: 130,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(12),
+                                color: controller.listColor(project.color),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black,
+                                    blurRadius: 0.2,
                                   ),
-                                ),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      "Progress 80%",
-                                      style: TextStyle(
-                                        fontSize: 10,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.white,
-                                      ),
+                                ],
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    "${project.name}",
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,
                                     ),
-                                    SizedBox(height: 4),
-                                    ClipRRect(
-                                      borderRadius: BorderRadius.circular(20),
-                                      child: LinearProgressIndicator(
-                                        value: 0.8,
-                                        minHeight: 8,
+                                  ),
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        "Progress 80%",
+                                        style: TextStyle(
+                                          fontSize: 10,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white,
+                                        ),
                                       ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
+                                      SizedBox(height: 4),
+                                      ClipRRect(
+                                        borderRadius: BorderRadius.circular(20),
+                                        child: LinearProgressIndicator(
+                                          value: 0.8,
+                                          minHeight: 8,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                          separatorBuilder: (context, index) =>
+                              SizedBox(width: 10),
+
+                          itemCount: controller.listProject.length,
+                        );
+                      }),
                     ),
                   ],
                 ),
@@ -314,7 +241,9 @@ class TaskView extends GetView<TaskController> {
                   children: [
                     SizedBox(height: 24),
                     InkWell(
-                      onTap: () => Get.toNamed(Routes.TASK_LIST),
+                      onTap: () => Get.toNamed(
+                        Routes.TASK_LIST,
+                      )?.then((value) => controller.getAllTask()),
                       child: Row(
                         children: [
                           Icon(
@@ -331,58 +260,46 @@ class TaskView extends GetView<TaskController> {
                       ),
                     ),
                     SizedBox(height: 16),
-
-                    Container(
-                      height: 80,
-                      padding: EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(12),
-                        boxShadow: [
-                          BoxShadow(color: Colors.black, blurRadius: 0.2),
-                        ],
-                      ),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Text(
-                              "Tugas Bahasa Inggris",
-                              style: TextStyle(
-                                color: AppColors.primary,
-                                fontSize: 16,
-                              ),
+                    Obx(() {
+                      return ListView.separated(
+                        itemBuilder: (context, index) {
+                          var task = controller.listTask[index];
+                          return Container(
+                            height: 80,
+                            padding: EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(12),
+                              boxShadow: [
+                                BoxShadow(color: Colors.black, blurRadius: 0.2),
+                              ],
                             ),
-                          ),
-                          Checkbox(value: true, onChanged: (value) {}),
-                        ],
-                      ),
-                    ),
-                    SizedBox(height: 12),
-                    Container(
-                      height: 80,
-                      padding: EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(12),
-                        boxShadow: [
-                          BoxShadow(color: Colors.black, blurRadius: 0.2),
-                        ],
-                      ),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Text(
-                              "Tugas Bahasa Inggris",
-                              style: TextStyle(
-                                color: AppColors.primary,
-                                fontSize: 16,
-                              ),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    task.name,
+                                    style: TextStyle(
+                                      color: AppColors.primary,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                ),
+                                Checkbox(
+                                  value: task.finishedAt == null ? false : true,
+                                  onChanged: (value) {
+                                    controller.changeFinishedTask(index);
+                                  },
+                                ),
+                              ],
                             ),
-                          ),
-                          Checkbox(value: false, onChanged: (value) {}),
-                        ],
-                      ),
-                    ),
+                          );
+                        },
+                        shrinkWrap: true,
+                        separatorBuilder: (txt, index) => SizedBox(height: 12),
+                        itemCount: controller.listTask.length,
+                      );
+                    }),
                   ],
                 ),
               ),

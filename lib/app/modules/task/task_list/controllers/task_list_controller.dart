@@ -1,5 +1,6 @@
 import 'package:bestieku/app/data/task_provider.dart';
 import 'package:bestieku/app/models/task_model.dart';
+import 'package:bestieku/app/modules/task/controllers/task_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:table_calendar/table_calendar.dart';
@@ -13,12 +14,13 @@ class TaskListController extends GetxController {
   var isDelete = false.obs;
   var nameController = TextEditingController();
   final _taskProvider = TaskProvider();
+  final taskController = TaskController();
   var isLoading = false.obs;
-  var listTask = [].obs;
+
   @override
   void onInit() {
     super.onInit();
-    getAllTask();
+    taskController.getAllTask();
     DateTime now = DateTime.now();
 
     rangeStart = Rxn<DateTime>(DateTime(now.year, now.month, now.day, 0, 0, 0));
@@ -47,12 +49,6 @@ class TaskListController extends GetxController {
     // getTransaction();
   }
 
-  Future<void> getAllTask() async {
-    var res = await _taskProvider.fetchAllTask();
-    var data = res.map((e) => TaskModel.fromJson(e)).toList();
-    listTask.assignAll(data);
-  }
-
   Future<void> addTask() async {
     final Map<String, dynamic> data = {
       'name': nameController.text.trim(),
@@ -62,25 +58,15 @@ class TaskListController extends GetxController {
     try {
       isLoading(true);
       await _taskProvider.createTask(data);
-      getAllTask();
+      taskController.getAllTask();
       Get.back();
     } finally {
       isLoading(false);
     }
   }
 
-  void changeFinishedTask(int index) async {
-    DateTime? updatedTime = listTask[index].finishedAt == null
-        ? DateTime.now()
-        : null;
-    listTask[index].finishedAt = updatedTime;
-
-    listTask.refresh();
-    await _taskProvider.onTaskChanged(updatedTime, listTask[index].id);
-  }
-
   void deleteTask(int id) async {
     await _taskProvider.deleteTask(id);
-    getAllTask();
+    taskController.getAllTask();
   }
 }

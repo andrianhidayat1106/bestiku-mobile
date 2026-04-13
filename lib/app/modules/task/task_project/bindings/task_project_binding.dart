@@ -7,6 +7,7 @@ class TaskProjectBinding extends Bindings {
   void dependencies() {
     Get.lazyPut<TaskProjectController>(
       () => TaskProjectController(),
+      fenix: true,
     );
   }
 }

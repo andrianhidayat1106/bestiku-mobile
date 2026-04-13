@@ -32,7 +32,7 @@ class TaskListView extends GetView<TaskListController> {
                     alignment: Alignment.centerLeft,
                     child: IconButton(
                       onPressed: () {
-                        Get.back();
+                        Get.back(result: true);
                       },
                       icon: Icon(Icons.arrow_back),
                       color: AppColors.primary,
@@ -194,7 +194,8 @@ class TaskListView extends GetView<TaskListController> {
 
                           return ListView.separated(
                             itemBuilder: (context, index) {
-                              var task = controller.listTask[index];
+                              var task =
+                                  controller.taskController.listTask[index];
                               return Container(
                                 height: 80,
                                 padding: EdgeInsets.all(16),
@@ -241,9 +242,8 @@ class TaskListView extends GetView<TaskListController> {
                                                 ? false
                                                 : true,
                                             onChanged: (value) {
-                                              controller.changeFinishedTask(
-                                                index,
-                                              );
+                                              controller.taskController
+                                                  .changeFinishedTask(index);
                                             },
                                           ),
                                   ],
@@ -253,7 +253,8 @@ class TaskListView extends GetView<TaskListController> {
                             shrinkWrap: true,
                             separatorBuilder: (txt, index) =>
                                 SizedBox(height: 12),
-                            itemCount: controller.listTask.length,
+                            itemCount:
+                                controller.taskController.listTask.length,
                           );
                         }),
                       ],

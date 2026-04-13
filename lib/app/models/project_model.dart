@@ -5,7 +5,6 @@ class ProjectModel {
   String? color;
   DateTime? startDate;
   DateTime? endDate;
-  int? userId;
 
   ProjectModel({
     this.id,
@@ -21,8 +20,7 @@ class ProjectModel {
     name = json['name'];
     description = json['description'];
     color = json['color'];
-    startDate = json['start_date'];
-    endDate = json['end_date'];
-    userId = json['user_id'];
+    startDate = DateTime.parse(json['start_date']);
+    endDate = DateTime.parse(json['end_date']);
   }
 }
