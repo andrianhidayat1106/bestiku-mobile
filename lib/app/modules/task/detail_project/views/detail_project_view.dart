@@ -2,6 +2,7 @@ import 'package:bestieku/app/core/theme/app_colors.dart';
 import 'package:bestieku/app/routes/app_pages.dart';
 import 'package:flutter/material.dart';
 
+import 'package:table_calendar/table_calendar.dart';
 import 'package:get/get.dart';
 import 'package:get/get_connect/http/src/utils/utils.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -75,170 +76,253 @@ class DetailProjectView extends GetView<DetailProjectController> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        Text(
-                          "Nama Project",
-                          style: TextStyle(
-                            fontWeight: FontWeight.w500,
-                            color: AppColors.primary,
-                          ),
-                        ),
-                        SizedBox(height: 4),
-                        TextField(),
-                        SizedBox(height: 8),
-                        Text(
-                          "Deskripsi",
-
-                          style: TextStyle(
-                            fontWeight: FontWeight.w500,
-                            color: AppColors.primary,
-                          ),
-                        ),
-                        SizedBox(height: 4),
-                        TextField(maxLines: 4),
-                        SizedBox(height: 8),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            // Dari Tanggal
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  "Dari Tanggal",
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w500,
-                                    color: AppColors.primary,
-                                  ),
-                                ),
-                                SizedBox(height: 4),
-                                Container(
-                                  width: 150,
-                                  height: 50,
-                                  padding: EdgeInsets.symmetric(horizontal: 16),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(12),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.black,
-                                        blurRadius: 0.2,
-                                      ),
-                                    ],
-                                  ),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Icon(
-                                        Icons.calendar_today,
-                                        size: 18,
-                                        color: AppColors.primary,
-                                      ),
-                                      Text(
-                                        "27/02/2026", // dummy text
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                          color: Colors.black87,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-
-                            // Sampai Tanggal
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  "Sampai Tanggal",
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w500,
-                                    color: AppColors.primary,
-                                  ),
-                                ),
-                                SizedBox(height: 4),
-                                Container(
-                                  width: 150,
-                                  height: 50,
-                                  padding: EdgeInsets.symmetric(horizontal: 16),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(12),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.black,
-                                        blurRadius: 0.2,
-                                      ),
-                                    ],
-                                  ),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Icon(
-                                        Icons.calendar_today,
-                                        size: 18,
-                                        color: AppColors.primary,
-                                      ),
-                                      Text(
-                                        "27/03/2026", // dummy text
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                          color: Colors.black87,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: 24),
-                        Text(
-                          "Warna",
-                          style: TextStyle(
-                            fontWeight: FontWeight.w500,
-                            color: AppColors.primary,
-                          ),
-                        ),
-                        SizedBox(height: 4),
-                        Row(
-                          children: [
-                            Container(
-                              width: 50,
-                              height: 50,
-                              decoration: BoxDecoration(
-                                color: Color(0xFF34C759),
-                                borderRadius: BorderRadius.circular(12),
-                                border: Border.all(
-                                  width: 2,
+                        Form(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "Nama Project",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w500,
                                   color: AppColors.primary,
                                 ),
                               ),
-                            ),
-                            SizedBox(width: 12),
-                            Container(
-                              width: 50,
-                              height: 50,
-                              decoration: BoxDecoration(
-                                color: Color(0xFF00C0E8),
-                                borderRadius: BorderRadius.circular(12),
+                              SizedBox(height: 4),
+                              TextFormField(
+                                controller: controller.nameController,
                               ),
-                            ),
-                            SizedBox(width: 12),
-                            Container(
-                              width: 50,
-                              height: 50,
-                              decoration: BoxDecoration(
-                                color: Color(0xFFFF2D55),
-                                borderRadius: BorderRadius.circular(12),
+                              SizedBox(height: 8),
+                              Text(
+                                "Deskripsi",
+
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w500,
+                                  color: AppColors.primary,
+                                ),
                               ),
-                            ),
-                          ],
+                              SizedBox(height: 4),
+                              TextFormField(
+                                maxLines: 4,
+                                controller: controller.description,
+                              ),
+                              SizedBox(height: 8),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "Rentang Tanggal",
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w500,
+                                      color: AppColors.primary,
+                                    ),
+                                  ),
+                                  SizedBox(height: 4),
+                                  GestureDetector(
+                                    onTap: () {
+                                      Get.bottomSheet(CalendarView());
+                                    },
+                                    child: Container(
+                                      width: double.infinity,
+                                      height: 50,
+                                      padding: EdgeInsets.symmetric(
+                                        horizontal: 16,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(12),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.black,
+                                            blurRadius: 0.2,
+                                          ),
+                                        ],
+                                      ),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Icon(
+                                            Icons.calendar_today,
+                                            size: 18,
+                                            color: AppColors.primary,
+                                          ),
+                                          Obx(
+                                            () => Text(
+                                              controller
+                                                  .rangeText, // dummy text
+                                              style: TextStyle(
+                                                fontSize: 14,
+                                                color: Colors.black87,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(height: 24),
+                              Text(
+                                "Warna",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w500,
+                                  color: AppColors.primary,
+                                ),
+                              ),
+                              SizedBox(height: 4),
+                              Obx(
+                                () => Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    GestureDetector(
+                                      onTap: () {
+                                        controller.selectColor.value = "green";
+                                      },
+                                      child: Container(
+                                        width: 50,
+                                        height: 50,
+                                        decoration: BoxDecoration(
+                                          border: Border.all(
+                                            color:
+                                                // ignore: unrelated_type_equality_checks
+                                                controller.selectColor.value ==
+                                                    "green"
+                                                ? AppColors.primary
+                                                : Colors.transparent,
+                                            width: 2,
+                                          ),
+                                          color: Color(0XFF34C759),
+                                          borderRadius: BorderRadius.circular(
+                                            12,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(width: 8),
+                                    GestureDetector(
+                                      onTap: () {
+                                        controller.selectColor.value = "blue";
+                                      },
+                                      child: Container(
+                                        width: 50,
+                                        height: 50,
+                                        decoration: BoxDecoration(
+                                          border: Border.all(
+                                            color:
+                                                // ignore: unrelated_type_equality_checks
+                                                controller.selectColor.value ==
+                                                    "blue"
+                                                ? AppColors.primary
+                                                : Colors.transparent,
+                                            width: 2,
+                                          ),
+                                          color: Color(0XFF00C0E8),
+                                          borderRadius: BorderRadius.circular(
+                                            12,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(width: 8),
+
+                                    GestureDetector(
+                                      onTap: () {
+                                        controller.selectColor.value = "brown";
+                                      },
+                                      child: Container(
+                                        width: 50,
+                                        height: 50,
+                                        decoration: BoxDecoration(
+                                          border: Border.all(
+                                            color:
+                                                // ignore: unrelated_type_equality_checks
+                                                controller.selectColor.value ==
+                                                    "brown"
+                                                ? AppColors.primary
+                                                : Colors.transparent,
+                                            width: 2,
+                                          ),
+                                          color: Color.fromARGB(
+                                            255,
+                                            143,
+                                            105,
+                                            112,
+                                          ),
+                                          borderRadius: BorderRadius.circular(
+                                            12,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(width: 8),
+                                    GestureDetector(
+                                      onTap: () {
+                                        controller.selectColor.value = "purple";
+                                      },
+                                      child: Container(
+                                        width: 50,
+                                        height: 50,
+                                        decoration: BoxDecoration(
+                                          border: Border.all(
+                                            color:
+                                                // ignore: unrelated_type_equality_checks
+                                                controller.selectColor.value ==
+                                                    "purple"
+                                                ? AppColors.primary
+                                                : Colors.transparent,
+                                            width: 2,
+                                          ),
+                                          color: const Color.fromARGB(
+                                            255,
+                                            97,
+                                            97,
+                                            185,
+                                          ),
+                                          borderRadius: BorderRadius.circular(
+                                            12,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(width: 8),
+                                    GestureDetector(
+                                      onTap: () {
+                                        controller.selectColor.value =
+                                            "soft-green";
+                                      },
+                                      child: Container(
+                                        width: 50,
+                                        height: 50,
+                                        decoration: BoxDecoration(
+                                          border: Border.all(
+                                            color:
+                                                // ignore: unrelated_type_equality_checks
+                                                controller.selectColor.value ==
+                                                    "soft-green"
+                                                ? AppColors.primary
+                                                : Colors.transparent,
+                                            width: 2,
+                                          ),
+                                          color: const Color.fromARGB(
+                                            255,
+                                            97,
+                                            185,
+                                            147,
+                                          ),
+                                          borderRadius: BorderRadius.circular(
+                                            12,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
+
                         SizedBox(height: 24),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -359,6 +443,44 @@ class DetailProjectView extends GetView<DetailProjectController> {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class CalendarView extends StatelessWidget {
+  final DetailProjectController detailProjectController = Get.put(
+    DetailProjectController(),
+  );
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: Get.height * 0.6,
+      child: Container(
+        padding: EdgeInsets.all(16),
+        width: double.infinity,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(50),
+            topRight: Radius.circular(50),
+          ),
+        ),
+        child: Obx(() {
+          return TableCalendar(
+            focusedDay: detailProjectController.focusedDay.value,
+            firstDay: DateTime.utc(2026, 1, 1),
+            lastDay: DateTime.utc(2030, 12, 31),
+            availableCalendarFormats: const {CalendarFormat.month: 'Month'},
+            rangeStartDay: detailProjectController.rangeStart.value,
+            rangeEndDay: detailProjectController.rangeEnd.value,
+            calendarFormat: detailProjectController.calendarFormat.value,
+            rangeSelectionMode: RangeSelectionMode.enforced,
+            onRangeSelected: detailProjectController.onRangeSelected,
+            onFormatChanged: (format) =>
+                detailProjectController.calendarFormat.value = format,
+          );
+        }),
       ),
     );
   }

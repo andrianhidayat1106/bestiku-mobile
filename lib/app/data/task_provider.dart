@@ -26,4 +26,14 @@ class TaskProvider extends GetConnect {
   Future<void> deleteTask(int id) async {
     await _supabase.from("task").delete().eq("id", id);
   }
+
+  Future<List<Map<String, dynamic>>> fetchAllTaskByProjectId(int id) async {
+    var res = _supabase
+        .from("task")
+        .select()
+        .eq("project_id", id)
+        .order('finished_at', ascending: false, nullsFirst: true);
+
+    return res;
+  }
 }

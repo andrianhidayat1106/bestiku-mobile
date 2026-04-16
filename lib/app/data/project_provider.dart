@@ -16,4 +16,9 @@ class ProjectProvider extends GetConnect {
   Future<void> deleteProject(int id) async {
     await _supabase.from("project").delete().eq("id", id);
   }
+
+  Future<Map<String, dynamic>> fetchProjectById(int id) async {
+    var data = await _supabase.from("project").select().eq("id", id).single();
+    return data;
+  }
 }

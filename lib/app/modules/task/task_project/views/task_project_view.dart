@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 import 'package:get/get_connect/http/src/utils/utils.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../controllers/task_project_controller.dart';
+import 'package:intl/intl.dart';
 
 class TaskProjectView extends GetView<TaskProjectController> {
   TaskProjectView({super.key});
@@ -167,8 +168,10 @@ class TaskProjectView extends GetView<TaskProjectController> {
                                   controller.taskController.listProject[index];
                               return Obx(
                                 () => GestureDetector(
-                                  onTap: () =>
-                                      Get.toNamed(Routes.DETAIL_PROJECT),
+                                  onTap: () => Get.toNamed(
+                                    Routes.DETAIL_PROJECT,
+                                    arguments: project.id,
+                                  ),
                                   child: Container(
                                     padding: EdgeInsets.all(12),
 
