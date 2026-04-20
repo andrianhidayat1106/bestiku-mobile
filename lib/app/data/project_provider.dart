@@ -21,4 +21,8 @@ class ProjectProvider extends GetConnect {
     var data = await _supabase.from("project").select().eq("id", id).single();
     return data;
   }
+
+  Future<void> update(int id, Map<String, dynamic> data) async {
+    await _supabase.from("project").update(data).eq("id", id);
+  }
 }

@@ -30,7 +30,7 @@ class TaskProvider extends GetConnect {
   Future<List<Map<String, dynamic>>> fetchAllTaskByProjectId(int id) async {
     var res = _supabase
         .from("task")
-        .select()
+        .select("*,project(*)")
         .eq("project_id", id)
         .order('finished_at', ascending: false, nullsFirst: true);
 

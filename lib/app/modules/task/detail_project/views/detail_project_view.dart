@@ -33,6 +33,7 @@ class DetailProjectView extends GetView<DetailProjectController> {
                     child: IconButton(
                       onPressed: () {
                         Get.back();
+                        controller.editProject();
                       },
                       icon: Icon(Icons.arrow_back),
                       color: AppColors.primary,
@@ -103,7 +104,7 @@ class DetailProjectView extends GetView<DetailProjectController> {
                               SizedBox(height: 4),
                               TextFormField(
                                 maxLines: 4,
-                                controller: controller.description,
+                                controller: controller.descriptionController,
                               ),
                               SizedBox(height: 8),
                               Column(
@@ -324,33 +325,73 @@ class DetailProjectView extends GetView<DetailProjectController> {
                         ),
 
                         SizedBox(height: 24),
+                        Text(
+                          "Daftar Tugas",
+                          style: TextStyle(
+                            fontWeight: FontWeight.w500,
+                            color: AppColors.primary,
+                          ),
+                        ),
+                        SizedBox(height: 8),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            Text(
-                              "Daftar Tugas",
-                              style: TextStyle(
-                                fontWeight: FontWeight.w500,
-                                color: AppColors.primary,
+                            Obx(
+                              () => ElevatedButton(
+                                onPressed: () {
+                                  controller.isDelete.toggle();
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: controller.isDelete.value
+                                      ? Colors.red
+                                      : AppColors.primary,
+                                  padding: EdgeInsets.only(
+                                    top: 16,
+                                    bottom: 16,
+                                    left: 32,
+                                    right: 32,
+                                  ),
+                                ),
+                                child: Text(
+                                  "Hapus Project",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
                               ),
                             ),
                             ElevatedButton(
-                              onPressed: () {},
+                              onPressed: () {
+                                Get.bottomSheet(
+                                  FormTaskView(),
+                                  isScrollControlled: true,
+                                );
+                              },
                               style: ElevatedButton.styleFrom(
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: 24,
-                                  vertical: 16,
+                                backgroundColor: Colors.green,
+                                padding: EdgeInsets.only(
+                                  top: 16,
+                                  bottom: 16,
+                                  left: 32,
+                                  right: 32,
                                 ),
                               ),
-                              child: Text("Tambah Tugas"),
+                              child: Text(
+                                "Tambah Project",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
                             ),
                           ],
                         ),
                         SizedBox(height: 16),
 
-                        Obx(
-                          () => ReorderableListView.builder(
+                        Obx(() {
+                          bool isDelete = controller.isDelete.value;
+                          return ReorderableListView.builder(
                             shrinkWrap: true,
                             physics:
                                 const NeverScrollableScrollPhysics(), // Mematikan scroll internal list
@@ -365,7 +406,7 @@ class DetailProjectView extends GetView<DetailProjectController> {
                               );
                             },
                             itemBuilder: (context, index) {
-                              final task = controller.taskProjectDetail[index];
+                              final task = controller.listTaskProject[index];
                               return Padding(
                                 key: ValueKey(task),
                                 padding: EdgeInsetsGeometry.only(bottom: 12),
@@ -405,7 +446,7 @@ class DetailProjectView extends GetView<DetailProjectController> {
                                               MainAxisAlignment.center,
                                           children: [
                                             Text(
-                                              "Belajar Mobile Flutter",
+                                              task.project!.name.toString(),
                                               style: TextStyle(
                                                 color: Colors.green,
                                                 fontSize: 16,
@@ -413,7 +454,7 @@ class DetailProjectView extends GetView<DetailProjectController> {
                                               ),
                                             ),
                                             Text(
-                                              "Tugas Bahasa Inggris",
+                                              task.name.toString(),
                                               style: TextStyle(
                                                 color: AppColors.primary,
                                                 fontSize: 14,
@@ -422,19 +463,44 @@ class DetailProjectView extends GetView<DetailProjectController> {
                                           ],
                                         ),
                                       ),
-                                      Checkbox(
-                                        value: false,
-                                        onChanged: (value) {},
-                                      ),
+                                      isDelete
+                                          ? IconButton(
+                                              style: IconButton.styleFrom(
+                                                backgroundColor: Colors
+                                                    .red, // Latar belakang tombol jadi merah
+                                                foregroundColor: Colors
+                                                    .white, // Warna icon jadi putih supaya kontras
+                                              ),
+                                              onPressed: () {
+                                                int taskId = task.id!;
+
+                                                // Masukkan taskId ke dalam fungsi agar controller tahu mana yang harus dihapus
+                                                controller.deleteTask(taskId);
+                                              },
+                                              icon: const Icon(
+                                                Icons.delete,
+                                                color: Colors.white,
+                                              ),
+                                            )
+                                          : Checkbox(
+                                              value: task.finishedAt == null
+                                                  ? false
+                                                  : true,
+                                              onChanged: (value) {
+                                                controller.changeFinishedTask(
+                                                  index,
+                                                );
+                                              },
+                                            ),
                                     ],
                                   ),
                                 ),
                               );
                             },
-                            itemCount: controller.taskProjectDetail.length,
+                            itemCount: controller.listTaskProject.length,
                             onReorder: controller.reorderTask,
-                          ),
-                        ),
+                          );
+                        }),
                       ],
                     ),
                   ),
@@ -481,6 +547,90 @@ class CalendarView extends StatelessWidget {
                 detailProjectController.calendarFormat.value = format,
           );
         }),
+      ),
+    );
+  }
+}
+
+class FormTaskView extends StatelessWidget {
+  final DetailProjectController detailProjectController = Get.put(
+    DetailProjectController(),
+  );
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: Get.height * 0.6,
+      child: Container(
+        padding: EdgeInsets.all(16),
+        width: double.infinity,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(50),
+            topRight: Radius.circular(50),
+          ),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Center(
+              child: Text(
+                "Tambah Tugas",
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.primary,
+                ),
+              ),
+            ),
+            SizedBox(height: 24),
+            Text("Nama Tugas"),
+            SizedBox(height: 4),
+            Expanded(
+              child: Form(
+                child: TextFormField(
+                  controller: detailProjectController.nameTaskController,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return "Nama dompet tidak boleh kosong";
+                    }
+                    return null;
+                  },
+                  decoration: InputDecoration(
+                    focusedErrorBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(color: Colors.red, width: 2),
+                    ),
+                    errorBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(color: Colors.red, width: 1),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.only(
+                      topRight: Radius.circular(50),
+                      bottomLeft: Radius.circular(50),
+                      topLeft: Radius.circular(50),
+                      bottomRight: Radius.circular(50),
+                    ),
+                  ),
+                  backgroundColor: AppColors.primary,
+                  padding: EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+                ),
+                onPressed: () => detailProjectController.addTask(),
+                child: Text("Tambah"),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

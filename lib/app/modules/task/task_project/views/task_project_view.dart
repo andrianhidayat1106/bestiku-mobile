@@ -168,10 +168,14 @@ class TaskProjectView extends GetView<TaskProjectController> {
                                   controller.taskController.listProject[index];
                               return Obx(
                                 () => GestureDetector(
-                                  onTap: () => Get.toNamed(
-                                    Routes.DETAIL_PROJECT,
-                                    arguments: project.id,
-                                  ),
+                                  onTap: () =>
+                                      Get.toNamed(
+                                        Routes.DETAIL_PROJECT,
+                                        arguments: project.id,
+                                      )?.then(
+                                        (value) => controller.taskController
+                                            .getAllProject(),
+                                      ),
                                   child: Container(
                                     padding: EdgeInsets.all(12),
 
