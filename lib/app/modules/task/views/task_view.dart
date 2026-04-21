@@ -2,9 +2,9 @@ import 'package:bestieku/app/core/theme/app_colors.dart';
 import 'package:bestieku/app/models/project_model.dart';
 import 'package:bestieku/app/routes/app_pages.dart';
 import 'package:flutter/material.dart';
-
+import 'package:table_calendar/table_calendar.dart';
 import 'package:get/get.dart';
-
+import 'package:intl/intl.dart';
 import '../controllers/task_controller.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -37,15 +37,39 @@ class TaskView extends GetView<TaskController> {
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
-                              Text(
-                                "Kamis, 19 Feb 2026",
-                                style: TextStyle(fontSize: 16),
+                              Obx(
+                                () => Text(
+                                  DateFormat(
+                                    'EEEE, d MMM yyyy',
+                                    'id_ID',
+                                  ).format(controller.selectDay.value),
+                                  style: TextStyle(fontSize: 16),
+                                ),
                               ),
                             ],
                           ),
                         ),
                         IconButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            Get.dialog(
+                              Dialog(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(50),
+                                ),
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(50),
+                                    color: Colors.white,
+                                  ),
+                                  padding: EdgeInsets.all(16),
+                                  child: Container(
+                                    width: Get.width * 0.9,
+                                    child: CalendarView(),
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
                           icon: SvgPicture.asset(
                             "assets/images/icons/calender.svg",
                           ),
@@ -306,6 +330,42 @@ class TaskView extends GetView<TaskController> {
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+class CalendarView extends StatelessWidget {
+  final TaskController taskController = Get.find<TaskController>();
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: Get.height * 0.5,
+      child: Container(
+        padding: EdgeInsets.all(16),
+        width: double.infinity,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(50),
+            topRight: Radius.circular(50),
+          ),
+        ),
+        child: Obx(() {
+          return TableCalendar(
+            focusedDay: taskController.focusedDay.value,
+            firstDay: DateTime.utc(2026, 1, 1),
+            lastDay: DateTime.utc(2030, 12, 31),
+            availableCalendarFormats: const {CalendarFormat.month: 'Month'},
+            calendarFormat: taskController.calendarFormat.value,
+            selectedDayPredicate: (day) {
+              return isSameDay(taskController.selectDay.value, day);
+            },
+            onDaySelected: taskController.onDaySelected,
+            onFormatChanged: (format) =>
+                taskController.calendarFormat.value = format,
+          );
+        }),
       ),
     );
   }

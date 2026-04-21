@@ -4,12 +4,21 @@ import 'package:bestieku/app/models/project_model.dart';
 import 'package:bestieku/app/models/task_model.dart';
 import 'package:flutter/animation.dart';
 import 'package:get/get.dart';
+import 'package:table_calendar/table_calendar.dart';
 
 class TaskController extends GetxController {
   final _taskProvider = TaskProvider();
   final _projectProvider = ProjectProvider();
   var listTask = [].obs;
   var listProject = [].obs;
+  var focusedDay = DateTime.now().obs;
+  var selectDay = DateTime.now().obs;
+  var calendarFormat = CalendarFormat.month.obs;
+
+  void onDaySelected(DateTime select, DateTime focused) {
+    focusedDay.value = focused;
+    selectDay.value = select;
+  }
 
   @override
   void onInit() {
@@ -19,7 +28,7 @@ class TaskController extends GetxController {
   }
 
   Future<void> getAllProject() async {
-    var res = await _projectProvider.fetchAllProject();
+    var res = await _projectProvider.fetchAllProjectByDate(focusedDay.value);
     var data = res.map((e) => ProjectModel.fromJson(e)).toList();
     listProject.assignAll(data);
   }

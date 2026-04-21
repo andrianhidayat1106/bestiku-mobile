@@ -13,6 +13,18 @@ class ProjectProvider extends GetConnect {
     return data;
   }
 
+  Future<List<Map<String, dynamic>>> fetchAllProjectByDate(
+    DateTime dateTime,
+  ) async {
+    String dateIso = dateTime.toIso8601String();
+    var data = await _supabase
+        .from("project")
+        .select()
+        .lte("start_date", dateIso) // start_date <= dateTime
+        .gte("end_date", dateIso); // end_date >= dateTime
+    return data;
+  }
+
   Future<void> deleteProject(int id) async {
     await _supabase.from("project").delete().eq("id", id);
   }
