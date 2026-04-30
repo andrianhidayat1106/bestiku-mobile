@@ -18,16 +18,19 @@ class TaskController extends GetxController {
   void onDaySelected(DateTime select, DateTime focused) {
     focusedDay.value = focused;
     selectDay.value = select;
+
+    getAllProjectByDay();
+    getAllTaskByDay();
   }
 
   @override
   void onInit() {
-    getAllTask();
-    getAllProject();
+    getAllTaskByDay();
+    getAllProjectByDay();
     super.onInit();
   }
 
-  Future<void> getAllProject() async {
+  Future<void> getAllProjectByDay() async {
     var res = await _projectProvider.fetchAllProjectByDate(focusedDay.value);
     var data = res.map((e) => ProjectModel.fromJson(e)).toList();
     listProject.assignAll(data);
@@ -50,8 +53,8 @@ class TaskController extends GetxController {
     }
   }
 
-  Future<void> getAllTask() async {
-    var res = await _taskProvider.fetchAllTask();
+  Future<void> getAllTaskByDay() async {
+    var res = await _taskProvider.fetchTaskByDay(selectDay.value);
     var data = res.map((e) => TaskModel.fromJson(e)).toList();
     listTask.assignAll(data);
   }

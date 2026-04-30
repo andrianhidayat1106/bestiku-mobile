@@ -20,7 +20,7 @@ class TaskListController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    taskController.getAllTask();
+    getAllTask();
     DateTime now = DateTime.now();
 
     rangeStart = Rxn<DateTime>(DateTime(now.year, now.month, now.day, 0, 0, 0));
@@ -49,6 +49,12 @@ class TaskListController extends GetxController {
     // getTransaction();
   }
 
+  Future<void> getAllTask() async {
+    var res = await _taskProvider.fetchAllTask();
+    var data = res.map((e) => TaskModel.fromJson(e)).toList();
+    taskController.listTask.assignAll(data);
+  }
+
   Future<void> addTask() async {
     final Map<String, dynamic> data = {
       'name': nameController.text.trim(),
@@ -58,7 +64,8 @@ class TaskListController extends GetxController {
     try {
       isLoading(true);
       await _taskProvider.createTask(data);
-      taskController.getAllTask();
+      getAllTask();
+      nameController.clear();
       Get.back();
     } finally {
       isLoading(false);
@@ -67,6 +74,6 @@ class TaskListController extends GetxController {
 
   void deleteTask(int id) async {
     await _taskProvider.deleteTask(id);
-    taskController.getAllTask();
+    getAllTask();
   }
 }

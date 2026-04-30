@@ -12,6 +12,22 @@ class TaskProvider extends GetConnect {
     return res;
   }
 
+  Future<List<Map<String, dynamic>>> fetchTaskByDay(DateTime dateTime) async {
+    // Format tanggal menjadi YYYY-MM-DD
+    String dateIso =
+        "${dateTime.year}-${dateTime.month.toString().padLeft(2, '0')}-${dateTime.day.toString().padLeft(2, '0')}";
+
+    final res = await _supabase
+        .from("task")
+        .select()
+        // Mengambil task yang rentang waktunya aktif di tanggal tersebut
+        .lte("start_date", dateIso)
+        .gte("end_date", dateIso)
+        .order('finished_at', ascending: false, nullsFirst: true);
+
+    return res;
+  }
+
   Future<void> createTask(Map<String, dynamic> data) async {
     await _supabase.from("task").insert(data);
   }

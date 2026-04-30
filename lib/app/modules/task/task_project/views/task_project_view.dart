@@ -173,8 +173,7 @@ class TaskProjectView extends GetView<TaskProjectController> {
                                         Routes.DETAIL_PROJECT,
                                         arguments: project.id,
                                       )?.then(
-                                        (value) => controller.taskController
-                                            .getAllProject(),
+                                        (value) => controller.getAllProject(),
                                       ),
                                   child: Container(
                                     padding: EdgeInsets.all(12),

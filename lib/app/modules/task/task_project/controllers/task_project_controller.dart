@@ -1,4 +1,5 @@
 import 'package:bestieku/app/data/project_provider.dart';
+import 'package:bestieku/app/models/project_model.dart';
 import 'package:bestieku/app/modules/task/controllers/task_controller.dart';
 import 'package:flutter/animation.dart';
 import 'package:flutter/material.dart';
@@ -14,20 +15,26 @@ class TaskProjectController extends GetxController {
   var selectColor = "green".obs;
   var nameController = TextEditingController();
   var descriptionController = TextEditingController();
-  var _projectProvider = ProjectProvider();
+  final _projectProvider = ProjectProvider();
   var taskController = TaskController();
   var isDelete = false.obs;
 
   @override
   void onInit() {
     super.onInit();
-    taskController.getAllProject();
+    getAllProject();
   }
 
-  void deleteProject(int id) {
+  Future<void> getAllProject() async {
+    var res = await _projectProvider.fetchAllProject();
+    var data = res.map((e) => ProjectModel.fromJson(e)).toList();
+    taskController.listProject.assignAll(data);
+  }
+
+  Future<void> deleteProject(int id) async {
     try {
-      _projectProvider.deleteProject(id);
-      taskController.getAllProject();
+      await _projectProvider.deleteProject(id);
+      getAllProject();
     } finally {}
   }
 
@@ -60,7 +67,7 @@ class TaskProjectController extends GetxController {
         "end_date": rangeStart.value!.toIso8601String(),
       };
       _projectProvider.createProject(data);
-      taskController.getAllProject();
+      getAllProject();
       Get.back();
     } finally {}
   }

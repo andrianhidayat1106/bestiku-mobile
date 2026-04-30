@@ -164,7 +164,7 @@ class TaskView extends GetView<TaskController> {
                     InkWell(
                       onTap: () => Get.toNamed(
                         Routes.TASK_PROJECT,
-                      )?.then((value) => controller.getAllProject()),
+                      )?.then((value) => controller.getAllProjectByDay()),
                       child: Row(
                         children: [
                           Icon(
@@ -196,55 +196,66 @@ class TaskView extends GetView<TaskController> {
                           itemBuilder: (context, index) {
                             ProjectModel project =
                                 controller.listProject[index];
-                            return Container(
-                              padding: EdgeInsets.all(12),
-                              width: 130,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(12),
-                                color: controller.listColor(project.color),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black,
-                                    blurRadius: 0.2,
-                                  ),
-                                ],
-                              ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    "${project.name}",
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.white,
+                            return GestureDetector(
+                              onTap: () =>
+                                  Get.toNamed(
+                                    Routes.DETAIL_PROJECT,
+                                    arguments: project.id,
+                                  )?.then((value) {
+                                    controller.getAllProjectByDay();
+                                  }),
+                              child: Container(
+                                padding: EdgeInsets.all(12),
+                                width: 130,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(12),
+                                  color: controller.listColor(project.color),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black,
+                                      blurRadius: 0.2,
                                     ),
-                                  ),
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        "Progress 80%",
-                                        style: TextStyle(
-                                          fontSize: 10,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.white,
-                                        ),
+                                  ],
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      "${project.name}",
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white,
                                       ),
-                                      SizedBox(height: 4),
-                                      ClipRRect(
-                                        borderRadius: BorderRadius.circular(20),
-                                        child: LinearProgressIndicator(
-                                          value: 0.8,
-                                          minHeight: 8,
+                                    ),
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          "Progress 80%",
+                                          style: TextStyle(
+                                            fontSize: 10,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.white,
+                                          ),
                                         ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
+                                        SizedBox(height: 4),
+                                        ClipRRect(
+                                          borderRadius: BorderRadius.circular(
+                                            20,
+                                          ),
+                                          child: LinearProgressIndicator(
+                                            value: 0.8,
+                                            minHeight: 8,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
                               ),
                             );
                           },
@@ -267,7 +278,7 @@ class TaskView extends GetView<TaskController> {
                     InkWell(
                       onTap: () => Get.toNamed(
                         Routes.TASK_LIST,
-                      )?.then((value) => controller.getAllTask()),
+                      )?.then((value) => controller.getAllProjectByDay()),
                       child: Row(
                         children: [
                           Icon(
@@ -286,6 +297,7 @@ class TaskView extends GetView<TaskController> {
                     SizedBox(height: 16),
                     Obx(() {
                       return ListView.separated(
+                        physics: const NeverScrollableScrollPhysics(),
                         itemBuilder: (context, index) {
                           var task = controller.listTask[index];
                           return Container(

@@ -16,12 +16,36 @@ class ProjectProvider extends GetConnect {
   Future<List<Map<String, dynamic>>> fetchAllProjectByDate(
     DateTime dateTime,
   ) async {
-    String dateIso = dateTime.toIso8601String();
+    DateTime startOfDay = DateTime(
+      dateTime.year,
+      dateTime.month,
+      dateTime.day,
+      0,
+      0,
+      0,
+    );
+
+    DateTime endOfDay = DateTime(
+      dateTime.year,
+      dateTime.month,
+      dateTime.day,
+      23,
+      59,
+      59,
+    );
+
     var data = await _supabase
         .from("project")
         .select()
-        .lte("start_date", dateIso) // start_date <= dateTime
-        .gte("end_date", dateIso); // end_date >= dateTime
+        .lte(
+          "start_date",
+          endOfDay.toIso8601String(),
+        ) // Start date harus sebelum akhir hari ini
+        .gte(
+          "end_date",
+          startOfDay.toIso8601String(),
+        ); // End date harus setelah awal hari ini
+
     return data;
   }
 
