@@ -17,8 +17,8 @@ class TransactionProvider extends GetConnect {
     return await _supabase
         .from("transaction")
         .select('* ,wallet (*)')
-        // .gte('created_at', '${todayDate}T00:00:00.000Z')
-        // .lte('created_at', '${todayDate}T23:59:59.999Z')
+        .gte('created_at', '${todayDate}T00:00:00.000Z')
+        .lte('created_at', '${todayDate}T23:59:59.999Z')
         .order('created_at', ascending: false);
   }
 

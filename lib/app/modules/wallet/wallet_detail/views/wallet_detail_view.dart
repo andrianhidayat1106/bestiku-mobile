@@ -124,13 +124,64 @@ class WalletDetailView extends GetView<WalletDetailController> {
                                 .listWallet
                                 .isEmpty) {
                               return Center(
-                                child: Text("Daftar Dompet anda masih kosong"),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(32.0),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      // Gunakan Icon Container sebagai pengganti gambar
+                                      Container(
+                                        padding: const EdgeInsets.all(24),
+                                        decoration: BoxDecoration(
+                                          color: Colors.grey[100],
+                                          shape: BoxShape.circle,
+                                        ),
+                                        child: Icon(
+                                          Icons.account_balance_wallet_outlined,
+                                          size: 80,
+                                          color: Colors.grey[400],
+                                        ),
+                                      ),
+                                      const SizedBox(height: 32),
+                                      const Text(
+                                        "Dompet Masih Kosong",
+                                        style: TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.black87,
+                                          letterSpacing: 0.5,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 12),
+                                      Text(
+                                        "Sepertinya kamu belum menambahkan dompet.\nYuk, buat dompet pertamamu untuk mulai mencatat transaksi!",
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          color: Colors.grey[600],
+                                          height: 1.5,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 40),
+
+                                      // Button Utama
+                                    ],
+                                  ),
+                                ),
                               );
                             }
-
                             return ListView.separated(
-                              separatorBuilder: (context, index) =>
-                                  SizedBox(height: 24),
+                              physics: const NeverScrollableScrollPhysics(),
+                              separatorBuilder: (context, index) => Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 8.0,
+                                ),
+                                child: Divider(
+                                  height: 1,
+                                  thickness: 1,
+                                  color: Colors.grey.withOpacity(0.3),
+                                ),
+                              ),
                               itemCount:
                                   controller.walletController.listWallet.length,
                               itemBuilder: (context, index) {

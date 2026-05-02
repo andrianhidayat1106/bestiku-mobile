@@ -14,26 +14,65 @@ class TaskController extends GetxController {
   var focusedDay = DateTime.now().obs;
   var selectDay = DateTime.now().obs;
   var calendarFormat = CalendarFormat.month.obs;
-
+  var selectProject = Rxn<ProjectModel>();
+  var totalSelesaiHarian = 0.obs;
+  var totalSelesaiProject = 0.obs;
   void onDaySelected(DateTime select, DateTime focused) {
     focusedDay.value = focused;
     selectDay.value = select;
 
     getAllProjectByDay();
     getAllTaskByDay();
+    refreshAmount();
   }
 
   @override
   void onInit() {
     getAllTaskByDay();
     getAllProjectByDay();
+    refreshAmount();
     super.onInit();
   }
+
+  List get completedTasks =>
+      listTask.where((task) => task.finishedAt != null).toList();
 
   Future<void> getAllProjectByDay() async {
     var res = await _projectProvider.fetchAllProjectByDate(focusedDay.value);
     var data = res.map((e) => ProjectModel.fromJson(e)).toList();
     listProject.assignAll(data);
+  }
+
+  Future<void> refreshAmount() async {
+    totalSelesaiHarian.value = await getAllAmountTask();
+    totalSelesaiProject.value = await getAllAmountTaskByProjectId();
+  }
+
+  Future<int> getAllAmountTask() async {
+    // Ambil semua task untuk hari tersebut (termasuk yang punya project maupun tidak)
+    var res = await _taskProvider.fetchAllTaskByDay(selectDay.value);
+
+    // Map ke model
+    List<TaskModel> localTasks = res.map((e) => TaskModel.fromJson(e)).toList();
+
+    // Filter: Selesai DAN project_id-nya null
+    int finishedCount = localTasks
+        .where((task) => task.finishedAt != null && task.project == null)
+        .length;
+
+    return finishedCount;
+  }
+
+  Future<int> getAllAmountTaskByProjectId() async {
+    var res = await _taskProvider.fetchAllTaskByDay(selectDay.value);
+
+    List<TaskModel> localTasks = res.map((e) => TaskModel.fromJson(e)).toList();
+
+    int finishedCount = localTasks
+        .where((task) => task.finishedAt != null && task.project != null)
+        .length;
+
+    return finishedCount;
   }
 
   Color listColor(String? value) {
@@ -59,13 +98,22 @@ class TaskController extends GetxController {
     listTask.assignAll(data);
   }
 
-  void changeFinishedTask(int index) async {
+  Future<void> getAllTaskByProjectId() async {
+    int id = selectProject.value!.id!;
+    var res = await _taskProvider.fetchAllTaskByProjectId(id);
+    var data = res.map((e) => TaskModel.fromJson(e)).toList();
+    listTask.assignAll(data);
+  }
+
+  Future<void> changeFinishedTask(int index) async {
     DateTime? updatedTime = listTask[index].finishedAt == null
         ? DateTime.now()
         : null;
     listTask[index].finishedAt = updatedTime;
 
     listTask.refresh();
+
     await _taskProvider.onTaskChanged(updatedTime, listTask[index].id);
+    refreshAmount();
   }
 }

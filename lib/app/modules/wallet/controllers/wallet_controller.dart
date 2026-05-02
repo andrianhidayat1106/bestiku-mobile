@@ -22,6 +22,7 @@ class WalletController extends GetxController {
   TextEditingController descriptionController = TextEditingController();
 
   var selectWallet = Rxn<WalletModel>();
+
   @override
   void onInit() {
     super.onInit();

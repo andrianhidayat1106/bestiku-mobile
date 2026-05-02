@@ -193,6 +193,7 @@ class TaskListView extends GetView<TaskListController> {
                           bool isDelete = controller.isDelete.value;
 
                           return ListView.separated(
+                            physics: NeverScrollableScrollPhysics(),
                             itemBuilder: (context, index) {
                               var task =
                                   controller.taskController.listTask[index];

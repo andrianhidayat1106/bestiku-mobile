@@ -53,7 +53,7 @@ class AppPages {
     ),
     GetPage(
       name: _Paths.WALLET,
-      page: () => const WalletView(),
+      page: () => WalletView(),
       binding: WalletBinding(),
       children: [
         GetPage(

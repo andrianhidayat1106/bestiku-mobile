@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import '../controllers/task_controller.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:dropdown_flutter/custom_dropdown.dart';
 
 class TaskView extends GetView<TaskController> {
   const TaskView({super.key});
@@ -105,13 +106,15 @@ class TaskView extends GetView<TaskController> {
                                 ),
                               ),
                               SizedBox(height: 8),
-                              Center(
-                                child: Text(
-                                  "4",
-                                  style: TextStyle(
-                                    fontSize: 44,
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
+                              Obx(
+                                () => Center(
+                                  child: Text(
+                                    "${controller.totalSelesaiHarian.value}",
+                                    style: TextStyle(
+                                      fontSize: 44,
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
                                 ),
                               ),
@@ -137,13 +140,15 @@ class TaskView extends GetView<TaskController> {
                                 ),
                               ),
                               SizedBox(height: 8),
-                              Center(
-                                child: Text(
-                                  "0",
-                                  style: TextStyle(
-                                    fontSize: 44,
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
+                              Obx(
+                                () => Center(
+                                  child: Text(
+                                    "${controller.totalSelesaiProject.value}",
+                                    style: TextStyle(
+                                      fontSize: 40,
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
                                 ),
                               ),
@@ -161,10 +166,12 @@ class TaskView extends GetView<TaskController> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     SizedBox(height: 24),
-                    InkWell(
-                      onTap: () => Get.toNamed(
-                        Routes.TASK_PROJECT,
-                      )?.then((value) => controller.getAllProjectByDay()),
+                    GestureDetector(
+                      onTap: () =>
+                          Get.toNamed(Routes.TASK_PROJECT)?.then((value) {
+                            controller.getAllProjectByDay();
+                            controller.refreshAmount();
+                          }),
                       child: Row(
                         children: [
                           Icon(
@@ -203,6 +210,7 @@ class TaskView extends GetView<TaskController> {
                                     arguments: project.id,
                                   )?.then((value) {
                                     controller.getAllProjectByDay();
+                                    controller.refreshAmount();
                                   }),
                               child: Container(
                                 padding: EdgeInsets.all(12),
@@ -275,21 +283,99 @@ class TaskView extends GetView<TaskController> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     SizedBox(height: 24),
-                    InkWell(
-                      onTap: () => Get.toNamed(
-                        Routes.TASK_LIST,
-                      )?.then((value) => controller.getAllProjectByDay()),
+                    GestureDetector(
+                      onTap: () => Get.toNamed(Routes.TASK_LIST)?.then((value) {
+                        controller.getAllProjectByDay();
+                        controller.refreshAmount();
+                      }),
                       child: Row(
                         children: [
                           Icon(
                             Icons.chevron_right,
-                            color: AppColors
-                                .primary, // Warna abu-abu agar tidak terlalu mencolok
+                            color: AppColors.primary,
                             size: 25,
                           ),
-                          Text(
-                            "Daftar Tugas",
-                            style: TextStyle(fontWeight: FontWeight.w500),
+                          // Gunakan Expanded agar Row ini mengambil sisa ruang yang tersedia
+                          Expanded(
+                            child: Row(
+                              // SpaceBetween akan mendorong "Daftar Tugas" ke kiri dan Dropdown ke kanan
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  "Daftar Tugas",
+                                  style: TextStyle(fontWeight: FontWeight.w500),
+                                ),
+
+                                Obx(
+                                  () => Container(
+                                    width: 200,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(16),
+                                      border: Border.all(
+                                        color: Colors.grey.shade300,
+                                        width: 1.0,
+                                      ),
+                                    ),
+                                    child: DropdownFlutter(
+                                      initialItem:
+                                          controller.selectProject.value == null
+                                          ? 'Tugas Harian'
+                                          : controller.listProject.firstWhere(
+                                              (p) =>
+                                                  p.id ==
+                                                  controller
+                                                      .selectProject
+                                                      .value
+                                                      ?.id,
+                                              orElse: () => 'Tugas Harian',
+                                            ),
+                                      items: [
+                                        'Tugas Harian',
+                                        ...controller.listProject,
+                                      ],
+                                      decoration: CustomDropdownDecoration(
+                                        closedBorder: Border.all(
+                                          color: Colors.transparent,
+                                        ),
+                                        closedFillColor: Colors.transparent,
+
+                                        headerStyle: TextStyle(
+                                          fontWeight: FontWeight.w400,
+                                          fontSize: 14,
+                                          color: Colors.black,
+                                        ),
+
+                                        listItemStyle: TextStyle(
+                                          fontWeight: FontWeight.w400,
+                                          fontSize: 14,
+                                          color: Colors.black,
+                                        ),
+
+                                        closedSuffixIcon: Icon(
+                                          Icons.keyboard_arrow_down,
+                                          size: 20,
+                                          color: Colors.grey,
+                                        ),
+                                      ),
+                                      onChanged: (project) {
+                                        if (project != null) {
+                                          if (project == "Tugas Harian" ||
+                                              project == null) {
+                                            controller.selectProject.value =
+                                                null;
+                                            controller.getAllTaskByDay();
+                                          } else {
+                                            controller.selectProject.value =
+                                                project;
+                                            controller.getAllTaskByProjectId();
+                                          }
+                                        }
+                                      },
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ],
                       ),
@@ -323,8 +409,8 @@ class TaskView extends GetView<TaskController> {
                                 ),
                                 Checkbox(
                                   value: task.finishedAt == null ? false : true,
-                                  onChanged: (value) {
-                                    controller.changeFinishedTask(index);
+                                  onChanged: (value) async {
+                                    await controller.changeFinishedTask(index);
                                   },
                                 ),
                               ],

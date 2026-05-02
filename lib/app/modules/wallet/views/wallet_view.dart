@@ -10,10 +10,18 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import '../controllers/wallet_controller.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+// Gunakan supabase_flutter, bukan hanya supabase
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:dropdown_flutter/custom_dropdown.dart';
 
 class WalletView extends GetView<WalletController> {
-  const WalletView({super.key});
+  // Ambil user yang sedang login
+  final user = Supabase.instance.client.auth.currentUser;
+
+  // Ambil nama dari metadata (pastikan key 'name' atau 'full_name' sesuai saat registrasi)
+  String get userName => user?.userMetadata?['full_name'] ?? "Guest";
+
+  WalletView({super.key});
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,7 +39,7 @@ class WalletView extends GetView<WalletController> {
                       children: [
                         SvgPicture.asset("assets/images/user.svg", width: 30),
                         SizedBox(width: 8),
-                        Text("Andrian Hidayat"),
+                        Text(userName),
                       ],
                     ),
                     SizedBox(height: 8),
@@ -101,8 +109,12 @@ class WalletView extends GetView<WalletController> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     SizedBox(height: 16),
-                    InkWell(
-                      onTap: () => Get.toNamed(Routes.WALLET_DETAIL),
+                    GestureDetector(
+                      onTap: () async {
+                        await Get.toNamed(Routes.WALLET_DETAIL);
+                        controller.fetchWallet();
+                        controller.fetchAllTransaction();
+                      },
                       child: Row(
                         children: [
                           Icon(

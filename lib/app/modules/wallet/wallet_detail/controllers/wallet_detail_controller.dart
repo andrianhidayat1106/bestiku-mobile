@@ -11,6 +11,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 class WalletDetailController extends GetxController {
   WalletProvider _walletProvider = WalletProvider();
   WalletController walletController = WalletController();
+  TransactionProvider _transactionProvider = TransactionProvider();
 
   var isLoading = false.obs;
 
@@ -127,26 +128,41 @@ class WalletDetailController extends GetxController {
 
     try {
       isLoading.value = true;
-      Map<String, dynamic> data = {
-        'name': nameController.text.trim(),
-        'total_amount': CurrencyFormat.parseToInt(amountController.text.trim()),
-        'color': selectColorName.value,
-        'icon': selectIconName.value,
-      };
-      await _walletProvider.updateWallet(selectedWalletId, data);
 
+      // 1. Ambil saldo lama sebagai int
+      final walletLama = walletController.listWallet.firstWhere(
+        (w) => w.id == selectedWalletId,
+      );
+      int saldoLama = (walletLama.totalAmount ?? 0).toInt();
+
+      // 2. Parse saldo baru ke int
+      int saldoBaru = CurrencyFormat.parseToInt(amountController.text.trim());
+
+      // 3. Logika pencatatan transaksi jika saldo berubah
+      if (saldoBaru != saldoLama) {
+        int selisih = saldoBaru - saldoLama;
+
+        Map<String, dynamic> transactionData = {
+          'p_wallet_id': selectedWalletId, // Gunakan p_wallet_id
+          'p_amount': selisih.abs(), // Gunakan p_amount
+          'p_type': selisih > 0 ? 'debit' : 'credit', // Gunakan p_type
+          'p_desc': 'Penyesuaian Saldo', // Gunakan p_desc (sesuai saran error)
+        };
+
+        // Memanggil RPC atau provider transaksi
+        await _transactionProvider.createTransactionRpc(transactionData);
+      }
+
+      // --- Sisa kode UI (Get.back, snackbar, dll) ---
       Get.back();
       await walletController.fetchWallet();
       Get.snackbar(
         "Sukses",
         "Dompet berhasil diperbarui",
-        snackPosition: SnackPosition.TOP, // Muncul dari atas
-        backgroundColor: Colors.green, // Warna hijau sukses
-        colorText: Colors.white, // Teks putih agar kontras
-        icon: const Icon(
-          Icons.check_circle,
-          color: Colors.white,
-        ), // Tambah ikon biar cakep
+        snackPosition: SnackPosition.TOP,
+        backgroundColor: Colors.green,
+        colorText: Colors.white,
+        icon: const Icon(Icons.check_circle, color: Colors.white),
         margin: const EdgeInsets.all(16),
         borderRadius: 12,
         duration: const Duration(seconds: 2),

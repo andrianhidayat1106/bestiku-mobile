@@ -23,4 +23,8 @@ class ProjectModel {
     startDate = DateTime.parse(json['start_date']);
     endDate = DateTime.parse(json['end_date']);
   }
+  @override
+  String toString() {
+    return name ?? "";
+  }
 }

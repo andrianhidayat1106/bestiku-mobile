@@ -8,6 +8,7 @@ class TaskProvider extends GetConnect {
     var res = _supabase
         .from("task")
         .select()
+        .filter("project_id", "is", null)
         .order('finished_at', ascending: false, nullsFirst: true);
     return res;
   }
@@ -20,7 +21,26 @@ class TaskProvider extends GetConnect {
     final res = await _supabase
         .from("task")
         .select()
+        .filter("project_id", "is", null)
         // Mengambil task yang rentang waktunya aktif di tanggal tersebut
+        .lte("start_date", dateIso)
+        .gte("end_date", dateIso)
+        .order('finished_at', ascending: false, nullsFirst: true);
+
+    return res;
+  }
+
+  Future<List<Map<String, dynamic>>> fetchAllTaskByDay(
+    DateTime dateTime,
+  ) async {
+    // Format tanggal menjadi YYYY-MM-DD
+    String dateIso =
+        "${dateTime.year}-${dateTime.month.toString().padLeft(2, '0')}-${dateTime.day.toString().padLeft(2, '0')}";
+
+    final res = await _supabase
+        .from("task")
+        .select('*, project(*)') // Ambil semua kolom task DAN data project-nya
+        // Filter project_id dihapus agar semua task (baik yang punya project_id maupun null) ikut terambil
         .lte("start_date", dateIso)
         .gte("end_date", dateIso)
         .order('finished_at', ascending: false, nullsFirst: true);

@@ -109,6 +109,7 @@ class DetailProjectController extends GetxController {
       await _taskProvider.createTask(data);
       // _taskProvider.getAllTask();
       getTaskByProjectId(projectId.value);
+      nameTaskController.clear();
       Get.back();
     } finally {
       // isLoading(false);
