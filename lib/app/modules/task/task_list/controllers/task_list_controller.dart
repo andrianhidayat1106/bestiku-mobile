@@ -1,3 +1,4 @@
+import 'package:bestieku/app/core/theme/app_colors.dart';
 import 'package:bestieku/app/data/task_provider.dart';
 import 'package:bestieku/app/models/task_model.dart';
 import 'package:bestieku/app/modules/task/controllers/task_controller.dart';
@@ -65,15 +66,41 @@ class TaskListController extends GetxController {
       isLoading(true);
       await _taskProvider.createTask(data);
       getAllTask();
-      nameController.clear();
+
       Get.back();
+
+      Get.rawSnackbar(
+        title: "Tambah",
+        message: "Task Harian berhasil ditambahkan",
+        snackPosition: SnackPosition.TOP,
+        backgroundColor: Colors.green,
+        margin: const EdgeInsets.all(16),
+        borderRadius: 12,
+        duration: const Duration(seconds: 2),
+      );
+      nameController.clear();
     } finally {
       isLoading(false);
     }
   }
 
-  void deleteTask(int id) async {
-    await _taskProvider.deleteTask(id);
-    getAllTask();
+  Future<void> deleteTask(int id) async {
+    try {
+      isLoading(true);
+      await _taskProvider.deleteTask(id);
+      getAllTask();
+
+      Get.rawSnackbar(
+        title: "Hapus",
+        message: "Task Harian berhasil di hapus",
+        snackPosition: SnackPosition.TOP,
+        backgroundColor: Colors.red,
+        margin: const EdgeInsets.all(16),
+        borderRadius: 12,
+        duration: const Duration(seconds: 2),
+      );
+    } finally {
+      isLoading(false);
+    }
   }
 }

@@ -89,6 +89,8 @@ class WalletController extends GetxController {
       }
 
       Get.back();
+      fetchWallet();
+      fetchAllTransaction();
       clearForm();
       Get.snackbar(
         "Sukses",
@@ -96,8 +98,6 @@ class WalletController extends GetxController {
         backgroundColor: Colors.green,
         colorText: Colors.white,
       );
-      fetchWallet();
-      fetchAllTransaction();
     } finally {
       isLoading(false);
     }

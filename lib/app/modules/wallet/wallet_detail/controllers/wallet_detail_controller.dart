@@ -151,21 +151,38 @@ class WalletDetailController extends GetxController {
 
         // Memanggil RPC atau provider transaksi
         await _transactionProvider.createTransactionRpc(transactionData);
+      } else {
+        Map<String, dynamic> data = {
+          'name': nameController.text.trim(),
+          'color': selectColorName.value,
+          'icon': selectIconName.value,
+        };
+
+        // Eksekusi update wallet
+        await _walletProvider.updateWallet(selectedWalletId, data);
       }
 
       // --- Sisa kode UI (Get.back, snackbar, dll) ---
       Get.back();
       await walletController.fetchWallet();
       Get.snackbar(
-        "Sukses",
+        "Informasi",
         "Dompet berhasil diperbarui",
         snackPosition: SnackPosition.TOP,
-        backgroundColor: Colors.green,
+        backgroundColor: Colors.blueAccent.withOpacity(0.9),
         colorText: Colors.white,
-        icon: const Icon(Icons.check_circle, color: Colors.white),
+        icon: const Icon(Icons.info_outline, color: Colors.white, size: 28),
         margin: const EdgeInsets.all(16),
         borderRadius: 12,
-        duration: const Duration(seconds: 2),
+        duration: const Duration(seconds: 3),
+        shouldIconPulse: false, // Ikon diam, lebih elegan
+        boxShadows: [
+          BoxShadow(
+            color: Colors.blue.withOpacity(0.3),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
       );
     } catch (e) {
       Get.snackbar("Error", e.toString());

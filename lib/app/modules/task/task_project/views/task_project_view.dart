@@ -216,9 +216,13 @@ class TaskProjectView extends GetView<TaskProjectController> {
                                                   ),
                                                   onPressed: () {
                                                     // Panggil fungsi hapus dari controller kamu
-                                                    controller.deleteProject(
-                                                      project.id!,
-                                                    );
+                                                    if (!controller
+                                                        .isLoading
+                                                        .value) {
+                                                      controller.deleteProject(
+                                                        project.id!,
+                                                      );
+                                                    }
                                                   },
                                                   icon: const Icon(
                                                     Icons.delete,
@@ -569,27 +573,33 @@ class AddTaskProjectSheet extends GetView<TaskProjectController> {
                       ),
                       SizedBox(
                         width: double.infinity,
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            shape: const RoundedRectangleBorder(
-                              borderRadius: BorderRadius.only(
-                                topRight: Radius.circular(50),
-                                bottomLeft: Radius.circular(50),
-                                topLeft: Radius.circular(50),
-                                bottomRight: Radius.circular(50),
+
+                        child: Obx(() {
+                          bool isLoading = controller.isLoading.value;
+                          return ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              shape: const RoundedRectangleBorder(
+                                borderRadius: BorderRadius.only(
+                                  topRight: Radius.circular(50),
+                                  bottomLeft: Radius.circular(50),
+                                  topLeft: Radius.circular(50),
+                                  bottomRight: Radius.circular(50),
+                                ),
+                              ),
+                              backgroundColor: AppColors.primary,
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 16,
                               ),
                             ),
-                            backgroundColor: AppColors.primary,
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 12,
-                              vertical: 16,
-                            ),
-                          ),
-                          onPressed: () {
-                            controller.addTask();
-                          },
-                          child: Text("Tambah"),
-                        ),
+                            onPressed: () {
+                              if (!isLoading) {
+                                controller.addTask();
+                              }
+                            },
+                            child: Text("Tambah"),
+                          );
+                        }),
                       ),
                     ],
                   ),

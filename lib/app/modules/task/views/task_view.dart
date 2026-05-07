@@ -188,94 +188,127 @@ class TaskView extends GetView<TaskController> {
                       ),
                     ),
                     SizedBox(height: 16),
+                  ],
+                ),
+              ),
 
-                    SizedBox(
-                      height: 160,
+              SizedBox(
+                height: 160,
+                child: Obx(() {
+                  if (controller.listProject.isEmpty) {
+                    return Center(
+                      child: Container(
+                        width: double.infinity,
+                        margin: const EdgeInsets.symmetric(horizontal: 16),
+                        padding: const EdgeInsets.all(20),
+                        decoration: BoxDecoration(
+                          // Menggunakan withValues untuk menghindari precision loss
+                          color: AppColors.primary.withValues(alpha: 0.05),
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(
+                            color: AppColors.primary.withValues(alpha: 0.2),
+                            width: 2,
+                          ),
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.assignment_late_outlined,
+                              color: AppColors.primary.withValues(alpha: 0.5),
+                              size: 40,
+                            ),
+                            const SizedBox(height: 12),
+                            Text(
+                              "Belum ada proyek",
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: AppColors.primary,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  }
+                  return Padding(
+                    padding: EdgeInsets.only(left: 16),
+                    child: ListView.separated(
+                      scrollDirection: Axis.horizontal,
+                      itemBuilder: (context, index) {
+                        final project = controller.listProject[index];
+                        return GestureDetector(
+                          onTap: () {
+                            // await Get.toNamed(
+                            //   Routes.DETAIL_PROJECT,
+                            //   arguments: project.id,
+                            // );
+                            // controller.getAllProjectByDay();
+                            // controller.refreshAmount();
 
-                      child: Obx(() {
-                        if (controller.listProject.isEmpty) {
-                          return const Center(
-                            child: Text("No projects available"),
-                          );
-                        }
-                        return ListView.separated(
-                          scrollDirection: Axis.horizontal,
-                          itemBuilder: (context, index) {
-                            ProjectModel project =
-                                controller.listProject[index];
-                            return GestureDetector(
-                              onTap: () =>
-                                  Get.toNamed(
-                                    Routes.DETAIL_PROJECT,
-                                    arguments: project.id,
-                                  )?.then((value) {
-                                    controller.getAllProjectByDay();
-                                    controller.refreshAmount();
-                                  }),
-                              child: Container(
-                                padding: EdgeInsets.all(12),
-                                width: 130,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(12),
-                                  color: controller.listColor(project.color),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black,
-                                      blurRadius: 0.2,
-                                    ),
-                                  ],
+                            Get.toNamed(
+                              Routes.DETAIL_PROJECT,
+                              arguments: project.id,
+                            )?.then((value) {
+                              controller.getAllProjectByDay();
+                              controller.refreshAmount();
+                            });
+                          },
+                          child: Container(
+                            padding: EdgeInsets.all(12),
+                            width: 130,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(12),
+                              color: controller.listColor(project.color),
+                              boxShadow: [
+                                BoxShadow(color: Colors.black, blurRadius: 0.2),
+                              ],
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  "${project.name}",
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                  ),
                                 ),
-                                child: Column(
+                                Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text(
-                                      "${project.name}",
+                                      "Progress 80%",
                                       style: TextStyle(
-                                        fontSize: 16,
+                                        fontSize: 10,
                                         fontWeight: FontWeight.bold,
                                         color: Colors.white,
                                       ),
                                     ),
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          "Progress 80%",
-                                          style: TextStyle(
-                                            fontSize: 10,
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.white,
-                                          ),
-                                        ),
-                                        SizedBox(height: 4),
-                                        ClipRRect(
-                                          borderRadius: BorderRadius.circular(
-                                            20,
-                                          ),
-                                          child: LinearProgressIndicator(
-                                            value: 0.8,
-                                            minHeight: 8,
-                                          ),
-                                        ),
-                                      ],
+                                    SizedBox(height: 4),
+                                    ClipRRect(
+                                      borderRadius: BorderRadius.circular(20),
+                                      child: LinearProgressIndicator(
+                                        value: 0.8,
+                                        minHeight: 8,
+                                      ),
                                     ),
                                   ],
                                 ),
-                              ),
-                            );
-                          },
-                          separatorBuilder: (context, index) =>
-                              SizedBox(width: 10),
-
-                          itemCount: controller.listProject.length,
+                              ],
+                            ),
+                          ),
                         );
-                      }),
+                      },
+                      separatorBuilder: (context, index) => SizedBox(width: 10),
+
+                      itemCount: controller.listProject.length,
                     ),
-                  ],
-                ),
+                  );
+                }),
               ),
               Padding(
                 padding: EdgeInsetsGeometry.only(left: 16, right: 16),
@@ -285,7 +318,7 @@ class TaskView extends GetView<TaskController> {
                     SizedBox(height: 24),
                     GestureDetector(
                       onTap: () => Get.toNamed(Routes.TASK_LIST)?.then((value) {
-                        controller.getAllProjectByDay();
+                        controller.getAllTaskByDay();
                         controller.refreshAmount();
                       }),
                       child: Row(
@@ -382,10 +415,57 @@ class TaskView extends GetView<TaskController> {
                     ),
                     SizedBox(height: 16),
                     Obx(() {
+                      if (controller.listTask.isEmpty) {
+                        return Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 40,
+                            horizontal: 24,
+                          ),
+                          decoration: BoxDecoration(
+                            color: AppColors.primary.withValues(alpha: 0.05),
+                            borderRadius: BorderRadius.circular(16),
+                            border: Border.all(
+                              color: AppColors.primary.withValues(alpha: 0.2),
+                              width: 2,
+                            ),
+                          ),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.post_add_rounded,
+                                color: AppColors.primary.withValues(alpha: 0.4),
+                                size: 48,
+                              ),
+                              const SizedBox(height: 12),
+                              Text(
+                                "Belum ada tugas yang diinput",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColors.primary,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                "Daftar tugas kamu masih kosong.",
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: AppColors.primary.withValues(
+                                    alpha: 0.6,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      }
                       return ListView.separated(
                         physics: const NeverScrollableScrollPhysics(),
                         itemBuilder: (context, index) {
                           var task = controller.listTask[index];
+
                           return Container(
                             height: 80,
                             padding: EdgeInsets.all(16),
@@ -410,6 +490,7 @@ class TaskView extends GetView<TaskController> {
                                 Checkbox(
                                   value: task.finishedAt == null ? false : true,
                                   onChanged: (value) async {
+                                    print("${index} view");
                                     await controller.changeFinishedTask(index);
                                   },
                                 ),

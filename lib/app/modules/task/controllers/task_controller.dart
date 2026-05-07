@@ -64,15 +64,18 @@ class TaskController extends GetxController {
   }
 
   Future<int> getAllAmountTaskByProjectId() async {
+    // 1. Ambil data (pastikan return-nya sudah List<TaskModel>)
+
     var res = await _taskProvider.fetchAllTaskByDay(selectDay.value);
+    List<TaskModel> tasks = res.map((e) => TaskModel.fromJson(e)).toList();
 
-    List<TaskModel> localTasks = res.map((e) => TaskModel.fromJson(e)).toList();
-
-    int finishedCount = localTasks
+    // 2. Filter & Hitung
+    // Kita cari yang finishedAt tidak null DAN project tidak null
+    int count = tasks
         .where((task) => task.finishedAt != null && task.project != null)
         .length;
 
-    return finishedCount;
+    return count;
   }
 
   Color listColor(String? value) {
@@ -115,5 +118,10 @@ class TaskController extends GetxController {
 
     await _taskProvider.onTaskChanged(updatedTime, listTask[index].id);
     refreshAmount();
+
+    print(totalSelesaiHarian.value);
+    print(totalSelesaiProject.value);
+
+    print(listTask[index].id);
   }
 }

@@ -2,6 +2,7 @@ import 'package:bestieku/app/data/project_provider.dart';
 import 'package:bestieku/app/data/task_provider.dart';
 import 'package:bestieku/app/models/project_model.dart';
 import 'package:bestieku/app/models/task_model.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -75,8 +76,8 @@ class DetailProjectController extends GetxController {
     selectColor.value = projectData.color.toString();
   }
 
-  Future<void> editProject() async {
-    if (project.value.id == null) return;
+  Future<bool> editProject() async {
+    if (project.value.id == null) return false;
 
     bool isChanged =
         nameController.text != project.value.name ||
@@ -94,7 +95,10 @@ class DetailProjectController extends GetxController {
         "end_date": rangeEnd.value!.toIso8601String(),
       };
       await _projectProvider.update(projectId.value, data);
+
+      return true;
     }
+    return false;
   }
 
   Future<void> addTask() async {
@@ -111,6 +115,16 @@ class DetailProjectController extends GetxController {
       getTaskByProjectId(projectId.value);
       nameTaskController.clear();
       Get.back();
+
+      Get.rawSnackbar(
+        title: "Tambah",
+        message: "Task Project berhasil ditambahkan",
+        snackPosition: SnackPosition.TOP,
+        backgroundColor: Colors.green,
+        margin: const EdgeInsets.all(16),
+        borderRadius: 12,
+        duration: const Duration(seconds: 2),
+      );
     } finally {
       // isLoading(false);
     }
@@ -133,9 +147,19 @@ class DetailProjectController extends GetxController {
     }
   }
 
-  void deleteTask(int id) async {
+  Future<void> deleteTask(int id) async {
     await _taskProvider.deleteTask(id);
     getTaskByProjectId(projectId.value);
+
+    Get.rawSnackbar(
+      title: "Hapus",
+      message: "Task Project berhasil dihapus",
+      snackPosition: SnackPosition.TOP,
+      backgroundColor: Colors.red,
+      margin: const EdgeInsets.all(16),
+      borderRadius: 12,
+      duration: const Duration(seconds: 2),
+    );
   }
 
   Future<void> getTaskByProjectId(int id) async {

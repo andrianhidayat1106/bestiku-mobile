@@ -1,5 +1,7 @@
 import 'package:bestieku/app/core/theme/app_colors.dart';
 import 'package:bestieku/app/models/wallet_model.dart';
+import 'package:bestieku/utils/currency_format.dart';
+import 'package:bestieku/utils/currency_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:dropdown_flutter/custom_dropdown.dart';
 
@@ -110,10 +112,10 @@ class WalletTransactionView extends GetView<WalletTransactionController> {
                                     child: Center(
                                       child: Obx(
                                         () => Text(
-                                          "+${controller.totalDebit.value}",
+                                          "+ ${CurrencyHelper.formatRupiah(controller.totalDebit.value)}",
                                           style: TextStyle(
                                             color: Colors.green,
-                                            fontSize: 25,
+                                            fontSize: 18,
                                             fontWeight: FontWeight.bold,
                                           ),
                                         ),
@@ -157,10 +159,10 @@ class WalletTransactionView extends GetView<WalletTransactionController> {
                                     child: Center(
                                       child: Obx(
                                         () => Text(
-                                          "-${controller.totalCredit.value}",
+                                          "- ${CurrencyHelper.formatRupiah(controller.totalCredit.value)}",
                                           style: TextStyle(
                                             color: Colors.red,
-                                            fontSize: 25,
+                                            fontSize: 18,
                                             fontWeight: FontWeight.bold,
                                           ),
                                         ),

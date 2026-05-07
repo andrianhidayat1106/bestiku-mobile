@@ -18,6 +18,7 @@ class TaskProjectController extends GetxController {
   final _projectProvider = ProjectProvider();
   var taskController = TaskController();
   var isDelete = false.obs;
+  var isLoading = false.obs;
 
   @override
   void onInit() {
@@ -33,9 +34,21 @@ class TaskProjectController extends GetxController {
 
   Future<void> deleteProject(int id) async {
     try {
+      isLoading(true);
       await _projectProvider.deleteProject(id);
       getAllProject();
-    } finally {}
+      Get.rawSnackbar(
+        title: "Hapus",
+        message: "Project berhasil dihapus",
+        snackPosition: SnackPosition.TOP,
+        backgroundColor: Colors.red,
+        margin: const EdgeInsets.all(16),
+        borderRadius: 12,
+        duration: const Duration(seconds: 2),
+      );
+    } finally {
+      isLoading(false);
+    }
   }
 
   void onRangeSelected(DateTime? start, DateTime? end, DateTime focused) {
@@ -57,8 +70,9 @@ class TaskProjectController extends GetxController {
     return "$start - $end";
   }
 
-  void addTask() {
+  Future<void> addTask() async {
     try {
+      isLoading(true);
       var data = {
         "name": nameController.text.trim(),
         "description": descriptionController.text.trim(),
@@ -67,8 +81,21 @@ class TaskProjectController extends GetxController {
         "end_date": rangeStart.value!.toIso8601String(),
       };
       _projectProvider.createProject(data);
-      getAllProject();
+
       Get.back();
-    } finally {}
+
+      Get.rawSnackbar(
+        title: "Tambah",
+        message: "Project berhasil ditambahkan",
+        snackPosition: SnackPosition.TOP,
+        backgroundColor: Colors.green,
+        margin: const EdgeInsets.all(16),
+        borderRadius: 12,
+        duration: const Duration(seconds: 2),
+      );
+      getAllProject();
+    } finally {
+      isLoading(false);
+    }
   }
 }

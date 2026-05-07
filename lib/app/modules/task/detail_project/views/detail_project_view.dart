@@ -31,9 +31,20 @@ class DetailProjectView extends GetView<DetailProjectController> {
                   Align(
                     alignment: Alignment.centerLeft,
                     child: IconButton(
-                      onPressed: () {
-                        Get.back();
-                        controller.editProject();
+                      onPressed: () async {
+                        bool isUpdated = await controller.editProject();
+
+                        Get.back(result: isUpdated);
+
+                        if (isUpdated) {
+                          Get.snackbar(
+                            "Berhasil",
+                            "Proyek telah diperbarui",
+                            snackPosition: SnackPosition.TOP,
+                            backgroundColor: Colors.blue,
+                            colorText: Colors.white,
+                          );
+                        }
                       },
                       icon: Icon(Icons.arrow_back),
                       color: AppColors.primary,
