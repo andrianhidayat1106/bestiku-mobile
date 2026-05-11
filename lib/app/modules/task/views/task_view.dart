@@ -240,13 +240,6 @@ class TaskView extends GetView<TaskController> {
                         final project = controller.listProject[index];
                         return GestureDetector(
                           onTap: () {
-                            // await Get.toNamed(
-                            //   Routes.DETAIL_PROJECT,
-                            //   arguments: project.id,
-                            // );
-                            // controller.getAllProjectByDay();
-                            // controller.refreshAmount();
-
                             Get.toNamed(
                               Routes.DETAIL_PROJECT,
                               arguments: project.id,

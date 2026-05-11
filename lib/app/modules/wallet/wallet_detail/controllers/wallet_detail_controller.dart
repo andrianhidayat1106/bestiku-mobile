@@ -1,9 +1,11 @@
+import 'package:bestieku/app/core/theme/app_colors.dart';
 import 'package:bestieku/app/data/transaction_provider.dart';
 import 'package:bestieku/app/data/wallet_provider.dart';
 import 'package:bestieku/app/models/wallet_model.dart';
 import 'package:bestieku/app/modules/wallet/controllers/wallet_controller.dart';
 import 'package:bestieku/utils/currency_format.dart';
 import 'package:bestieku/utils/currency_helper.dart';
+import 'package:bestieku/utils/snackbar_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -51,24 +53,52 @@ class WalletDetailController extends GetxController {
     try {
       isLoading.value = true;
 
-      final Map<String, dynamic> data = {
+      Get.dialog(
+        const Center(
+          child: CircularProgressIndicator(color: AppColors.primary),
+        ),
+        barrierDismissible: false,
+      );
+
+      // 1. Parse saldo awal
+      int saldoAwal = CurrencyFormat.parseToInt(amountController.text.trim());
+
+      // 2. Siapkan data wallet
+      final Map<String, dynamic> walletData = {
         'name': nameController.text.trim(),
-        'total_amount': CurrencyFormat.parseToInt(amountController.text),
+        'total_amount': 0,
         'color': selectColorName.value,
         'icon': selectIconName.value,
       };
-      await _walletProvider.createWallet(data);
 
+      // 3. Simpan wallet dan ambil response (asumsi return data wallet termasuk ID)
+      final response = await _walletProvider.createWallet(walletData);
+
+      // Ambil ID wallet yang baru saja dibuat
+      // Sesuaikan key 'id' dengan struktur response dari Supabase/Backend Anda
+      final newWalletId = response['id'];
+
+      // 4. Jika saldo awal != 0, catat sebagai transaksi 'Saldo Awal'
+      if (saldoAwal != 0 && newWalletId != null) {
+        Map<String, dynamic> transactionData = {
+          'p_wallet_id': newWalletId,
+          'p_amount': saldoAwal.abs(),
+          'p_type': saldoAwal > 0 ? 'debit' : 'credit',
+          'p_desc': 'Saldo Awal',
+        };
+
+        await _transactionProvider.createTransactionRpc(transactionData);
+      }
+
+      if (Get.isDialogOpen ?? false) Get.back();
       Get.back();
       clearForm();
       await walletController.fetchWallet();
-      Get.snackbar(
-        "Sukses",
-        "Dompet baru berhasil ditambahkan",
-        backgroundColor: Colors.green,
-        colorText: Colors.white,
-      );
+      Get.closeAllSnackbars();
+      AppSnackbar.success("Berhasil Menambah Wallet");
     } catch (e) {
+      if (Get.isDialogOpen ?? false)
+        Get.back(); // Pastikan dialog loading tertutup jika error
       Get.snackbar("Error", "Gagal menambah dompet: $e");
     } finally {
       isLoading.value = false;
@@ -76,6 +106,7 @@ class WalletDetailController extends GetxController {
   }
 
   Future<void> deleteWallet() async {
+    if (isLoading.value) return;
     final selectedWalletId = this.selectedWalletId;
 
     if (selectedWalletId == null) {
@@ -84,17 +115,19 @@ class WalletDetailController extends GetxController {
     }
     try {
       isLoading.value = true;
+      Get.dialog(
+        const Center(
+          child: CircularProgressIndicator(color: AppColors.primary),
+        ),
+        barrierDismissible: false,
+      );
       await _walletProvider.deleteWallet(selectedWalletId);
 
-      Get.back();
       await walletController.fetchWallet();
-
-      Get.snackbar(
-        "Sukses",
-        "Dompet telah dihapus",
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
+      if (Get.isDialogOpen ?? false) Get.back();
+      Get.back();
+      Get.closeAllSnackbars();
+      AppSnackbar.delete("Berhasil Menghapus Wallet");
     } catch (e) {
       Get.snackbar("Error", "Gagal menghapus data: $e");
     } finally {
@@ -120,7 +153,12 @@ class WalletDetailController extends GetxController {
   }
 
   Future<void> updateWallet() async {
+    if (!formKey.currentState!.validate()) {
+      return;
+    }
+
     final selectedWalletId = this.selectedWalletId;
+
     if (selectedWalletId == null) {
       Get.snackbar("Error", "ID tidak ditemukan");
       return;
@@ -128,7 +166,12 @@ class WalletDetailController extends GetxController {
 
     try {
       isLoading.value = true;
-
+      Get.dialog(
+        const Center(
+          child: CircularProgressIndicator(color: AppColors.primary),
+        ),
+        barrierDismissible: false,
+      );
       // 1. Ambil saldo lama sebagai int
       final walletLama = walletController.listWallet.firstWhere(
         (w) => w.id == selectedWalletId,
@@ -161,29 +204,11 @@ class WalletDetailController extends GetxController {
         // Eksekusi update wallet
         await _walletProvider.updateWallet(selectedWalletId, data);
       }
-
-      // --- Sisa kode UI (Get.back, snackbar, dll) ---
+      if (Get.isDialogOpen ?? false) Get.back();
       Get.back();
       await walletController.fetchWallet();
-      Get.snackbar(
-        "Informasi",
-        "Dompet berhasil diperbarui",
-        snackPosition: SnackPosition.TOP,
-        backgroundColor: Colors.blueAccent.withOpacity(0.9),
-        colorText: Colors.white,
-        icon: const Icon(Icons.info_outline, color: Colors.white, size: 28),
-        margin: const EdgeInsets.all(16),
-        borderRadius: 12,
-        duration: const Duration(seconds: 3),
-        shouldIconPulse: false, // Ikon diam, lebih elegan
-        boxShadows: [
-          BoxShadow(
-            color: Colors.blue.withOpacity(0.3),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      );
+      Get.closeAllSnackbars();
+      AppSnackbar.info("Berhasil Memperbarui Wallet");
     } catch (e) {
       Get.snackbar("Error", e.toString());
     } finally {

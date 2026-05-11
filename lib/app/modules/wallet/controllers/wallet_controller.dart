@@ -1,11 +1,13 @@
 import 'dart:ffi';
 
+import 'package:bestieku/app/core/theme/app_colors.dart';
 import 'package:bestieku/app/data/transaction_provider.dart';
 import 'package:bestieku/app/data/wallet_provider.dart';
 import 'package:bestieku/app/models/transaction_model.dart';
 import 'package:bestieku/app/models/wallet_model.dart';
 import 'package:bestieku/app/modules/wallet/wallet_detail/controllers/wallet_detail_controller.dart';
 import 'package:bestieku/utils/currency_format.dart';
+import 'package:bestieku/utils/snackbar_helper.dart';
 import 'package:flutter/animation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -18,7 +20,9 @@ class WalletController extends GetxController {
   final TransactionProvider _transactionProvider = TransactionProvider();
   var isLoading = false.obs;
   var totalAllWalletAmount = 0.0.obs;
-  TextEditingController totalAmountController = TextEditingController();
+  TextEditingController totalAmountController = TextEditingController(
+    text: "Rp 0",
+  );
   TextEditingController descriptionController = TextEditingController();
 
   var selectWallet = Rxn<WalletModel>();
@@ -26,9 +30,20 @@ class WalletController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    fetchWallet();
-    fetchAllTransaction();
-    fetchAllWalletAmount();
+    fetchDataFirst();
+  }
+
+  void fetchDataFirst() async {
+    try {
+      isLoading(true);
+
+      fetchWallet();
+      fetchAllTransaction();
+      fetchAllWalletAmount();
+    } catch (e) {
+    } finally {
+      isLoading(false);
+    }
   }
 
   String listIcon(String? value) {
@@ -76,9 +91,14 @@ class WalletController extends GetxController {
   Future<void> addTransaction(String transactionType) async {
     try {
       isLoading(true);
-
+      Get.dialog(
+        const Center(
+          child: CircularProgressIndicator(color: AppColors.primary),
+        ),
+        barrierDismissible: false,
+      );
       if (selectWallet.value != null) {
-        _transactionProvider.createTransactionRpc({
+        await _transactionProvider.createTransactionRpc({
           'p_type': transactionType,
           'p_desc': descriptionController.text.trim(),
           'p_amount': CurrencyFormat.parseToInt(
@@ -87,17 +107,16 @@ class WalletController extends GetxController {
           'p_wallet_id': selectWallet.value!.id,
         });
       }
-
+      await Future.wait([
+        fetchAllTransaction(),
+        fetchWallet(),
+        fetchAllWalletAmount(),
+      ]);
+      Get.closeAllSnackbars();
+      if (Get.isDialogOpen ?? false) Get.back();
       Get.back();
-      fetchWallet();
-      fetchAllTransaction();
       clearForm();
-      Get.snackbar(
-        "Sukses",
-        "Dompet baru berhasil ditambahkan",
-        backgroundColor: Colors.green,
-        colorText: Colors.white,
-      );
+      AppSnackbar.success("Berhasil Menambah Transaksi");
     } finally {
       isLoading(false);
     }
@@ -105,7 +124,7 @@ class WalletController extends GetxController {
 
   void clearForm() {
     selectWallet.value == null;
-    totalAmountController.clear();
+    totalAmountController.text = "Rp 0";
     descriptionController.clear();
   }
 

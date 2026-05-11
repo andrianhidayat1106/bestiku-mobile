@@ -12,8 +12,15 @@ class WalletProvider extends GetConnect {
     return data;
   }
 
-  Future<void> createWallet(Map<String, dynamic> data) async {
-    await _supabase.from("wallet").insert(data);
+  Future<Map<String, dynamic>> createWallet(Map<String, dynamic> data) async {
+    // Tambahkan .select().single() untuk mendapatkan data yang baru diinsert
+    final response = await _supabase
+        .from("wallet")
+        .insert(data)
+        .select()
+        .single();
+
+    return response;
   }
 
   Future<void> updateWallet(int id, Map<String, dynamic> data) async {

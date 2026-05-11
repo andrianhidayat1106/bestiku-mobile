@@ -271,6 +271,32 @@ class WalletTransactionView extends GetView<WalletTransactionController> {
                           );
                         }),
                         SizedBox(height: 24),
+                        SizedBox(
+                          width: double.infinity,
+                          child: Obx(
+                            () => ElevatedButton(
+                              onPressed: () {
+                                var isDelete = controller.isDelete.value;
+                                if (isDelete) {
+                                  controller.isDelete.value = false;
+                                } else {
+                                  controller.isDelete.value = true;
+                                }
+                              },
+                              style: ElevatedButton.styleFrom(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 30,
+                                  vertical: 15,
+                                ),
+                                backgroundColor: controller.isDelete.value
+                                    ? Colors.red
+                                    : AppColors.primary,
+                              ),
+                              child: Text("Hapus"),
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: 24),
                         Text(
                           "Daftar Transaksi",
                           style: TextStyle(
@@ -280,6 +306,7 @@ class WalletTransactionView extends GetView<WalletTransactionController> {
                         ),
                         SizedBox(height: 4),
                         Obx(() {
+                          var tempIsDelete = controller.isDelete.value;
                           return ListView.separated(
                             shrinkWrap: true,
                             physics: NeverScrollableScrollPhysics(),
@@ -351,19 +378,51 @@ class WalletTransactionView extends GetView<WalletTransactionController> {
                                     ),
                                     transaction.transactionType == "credit"
                                         ? Text(
-                                            "-" + transaction.amount.toString(),
+                                            "-" +
+                                                CurrencyHelper.formatRupiah(
+                                                  transaction.amount,
+                                                ),
                                             style: TextStyle(
                                               fontWeight: FontWeight.bold,
                                               color: Colors.red,
                                             ),
                                           )
                                         : Text(
-                                            "+" + transaction.amount.toString(),
+                                            "+" +
+                                                CurrencyHelper.formatRupiah(
+                                                  transaction.amount,
+                                                ),
                                             style: TextStyle(
                                               fontWeight: FontWeight.bold,
                                               color: Colors.green,
                                             ),
                                           ),
+                                    SizedBox(width: 20),
+                                    if (tempIsDelete)
+                                      Padding(
+                                        padding: const EdgeInsets.only(
+                                          right: 12,
+                                        ),
+                                        child: InkWell(
+                                          onTap: () {
+                                            controller.deleteTransaction(
+                                              transaction.id!,
+                                            );
+                                          },
+                                          child: Container(
+                                            padding: const EdgeInsets.all(12),
+                                            decoration: const BoxDecoration(
+                                              color: Colors.red,
+                                              shape: BoxShape.circle,
+                                            ),
+                                            child: const Icon(
+                                              Icons.delete,
+                                              color: Colors.white,
+                                              size: 18,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
                                   ],
                                 ),
                               );

@@ -148,6 +148,54 @@ class TaskProjectView extends GetView<TaskProjectController> {
                           ),
                         ),
                         Obx(() {
+                          if (controller.taskController.listProject.isEmpty) {
+                            return Center(
+                              child: Padding(
+                                padding: const EdgeInsets.all(32.0),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    // Icon Container disesuaikan untuk Project
+                                    Container(
+                                      padding: const EdgeInsets.all(24),
+                                      decoration: BoxDecoration(
+                                        color: Colors
+                                            .grey[100], // Warna biru muda agar lebih segar
+                                        shape: BoxShape.circle,
+                                      ),
+                                      child: Icon(
+                                        Icons
+                                            .assignment_outlined, // Icon list/project
+                                        size: 80,
+                                        color: Colors.grey,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 32),
+                                    const Text(
+                                      "Belum Ada Project",
+                                      style: TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black87,
+                                        letterSpacing: 0.5,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 12),
+                                    Text(
+                                      "Sepertinya kamu belum memiliki project aktif.\nBuat project baru untuk mengelompokkan tugas-tugasmu agar lebih teratur!",
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        color: Colors.grey[600],
+                                        height: 1.5,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 40),
+                                  ],
+                                ),
+                              ),
+                            );
+                          }
                           return GridView.builder(
                             padding: EdgeInsets.only(top: 16),
                             gridDelegate:

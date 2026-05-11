@@ -71,7 +71,9 @@ class WalletView extends GetView<WalletController> {
                           ),
                           child: Obx(
                             () => Text(
-                              "${CurrencyHelper.formatRupiah(controller.totalAllWalletAmount.value)}",
+                              CurrencyHelper.formatRupiah(
+                                controller.totalAllWalletAmount.value,
+                              ),
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 color: Colors.white,
@@ -114,6 +116,7 @@ class WalletView extends GetView<WalletController> {
                         await Get.toNamed(Routes.WALLET_DETAIL);
                         controller.fetchWallet();
                         controller.fetchAllTransaction();
+                        controller.fetchAllWalletAmount();
                       },
                       child: Row(
                         children: [
@@ -132,249 +135,311 @@ class WalletView extends GetView<WalletController> {
                     ),
                     SizedBox(height: 8),
                     Obx(() {
-                      return Column(
-                        children: [
-                          SizedBox(
-                            height: 145,
-                            child: ListView.separated(
-                              separatorBuilder: (context, index) {
-                                return SizedBox(width: 8);
-                              },
-                              itemCount: controller.listWallet.length,
-                              clipBehavior: Clip.none,
-                              scrollDirection: Axis.horizontal,
-                              itemBuilder: (context, index) {
-                                final WalletModel wallet =
-                                    controller.listWallet[index];
-                                return Material(
-                                  child: Ink(
+                      if (controller.listWallet.isEmpty) {
+                        return Container(
+                          width: double.infinity,
+                          margin: const EdgeInsets.only(right: 16),
+                          padding: const EdgeInsets.all(50),
+                          decoration: BoxDecoration(
+                            // Menggunakan withValues untuk menghindari precision loss
+                            color: AppColors.primary.withValues(alpha: 0.05),
+                            borderRadius: BorderRadius.circular(16),
+                            border: Border.all(
+                              color: AppColors.primary.withValues(alpha: 0.2),
+                              width: 2,
+                            ),
+                          ),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.wallet,
+                                color: AppColors.primary.withValues(alpha: 0.5),
+                                size: 40,
+                              ),
+                              const SizedBox(height: 12),
+                              Text(
+                                "Belum ada Wallet",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColors.primary,
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      }
+                      return SizedBox(
+                        height: 145,
+                        child: ListView.separated(
+                          separatorBuilder: (context, index) {
+                            return SizedBox(width: 8);
+                          },
+                          itemCount: controller.listWallet.length,
+                          clipBehavior: Clip.none,
+                          scrollDirection: Axis.horizontal,
+                          itemBuilder: (context, index) {
+                            final WalletModel wallet =
+                                controller.listWallet[index];
+                            return Material(
+                              child: Ink(
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black12,
+                                      blurRadius: 4,
+                                    ),
+                                  ],
+                                ),
+                                child: InkWell(
+                                  onTap: () {
+                                    controller.selectWallet.value = wallet;
+                                    Get.bottomSheet(
+                                      isScrollControlled: true,
+                                      WalletTransactionSheet(),
+                                    );
+                                  },
+                                  child: Container(
+                                    padding: EdgeInsets.all(12),
+                                    width: 150,
+                                    height: 145,
                                     decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(12),
                                       color: Colors.white,
                                       boxShadow: [
                                         BoxShadow(
-                                          color: Colors.black12,
-                                          blurRadius: 4,
+                                          color: Colors.black,
+                                          blurRadius: 0.2,
                                         ),
                                       ],
                                     ),
-                                    child: InkWell(
-                                      onTap: () {
-                                        controller.selectWallet.value = wallet;
-                                        Get.bottomSheet(
-                                          isScrollControlled: true,
-                                          WalletTransactionSheet(),
-                                        );
-                                      },
-                                      child: Container(
-                                        padding: EdgeInsets.all(12),
-                                        width: 150,
-                                        height: 145,
-                                        decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(
-                                            12,
-                                          ),
-                                          color: Colors.white,
-                                          boxShadow: [
-                                            BoxShadow(
-                                              color: Colors.black,
-                                              blurRadius: 0.2,
-                                            ),
-                                          ],
-                                        ),
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Row(
                                           children: [
-                                            Row(
-                                              children: [
-                                                Container(
-                                                  padding: EdgeInsets.all(12),
-                                                  width: 50,
-                                                  height: 50,
-                                                  decoration: BoxDecoration(
-                                                    color: Color(0xFFF7F7F7),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                          12,
-                                                        ),
-                                                  ),
-                                                  child: SvgPicture.asset(
-                                                    controller.listIcon(
-                                                      wallet.icon,
-                                                    ),
-                                                    colorFilter:
-                                                        ColorFilter.mode(
-                                                          controller.listColor(
-                                                            wallet.color,
-                                                          ),
-                                                          BlendMode.srcIn,
-                                                        ),
-                                                  ),
+                                            Container(
+                                              padding: EdgeInsets.all(12),
+                                              width: 50,
+                                              height: 50,
+                                              decoration: BoxDecoration(
+                                                color: Color(0xFFF7F7F7),
+                                                borderRadius:
+                                                    BorderRadius.circular(12),
+                                              ),
+                                              child: SvgPicture.asset(
+                                                controller.listIcon(
+                                                  wallet.icon,
                                                 ),
-                                                SizedBox(width: 6),
-                                                Expanded(
-                                                  child: Text(
-                                                    wallet.name.toString(),
-                                                    style: TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.w500,
-                                                    ),
+                                                colorFilter: ColorFilter.mode(
+                                                  controller.listColor(
+                                                    wallet.color,
                                                   ),
+                                                  BlendMode.srcIn,
                                                 ),
-                                              ],
-                                            ),
-                                            Divider(
-                                              thickness: 1,
-                                              color: Colors.grey,
-                                            ),
-                                            Text(
-                                              "Total",
-                                              style: TextStyle(
-                                                fontWeight: FontWeight.w400,
-                                                color: Colors.grey,
-                                                fontSize: 12,
                                               ),
                                             ),
-                                            SizedBox(height: 4),
-                                            Text(
-                                              "${CurrencyHelper.formatRupiah(wallet.totalAmount)}",
-                                              style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                color: AppColors.lightOrange,
-                                                fontSize: 16,
+                                            SizedBox(width: 6),
+                                            Expanded(
+                                              child: Text(
+                                                wallet.name.toString(),
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.w500,
+                                                ),
                                               ),
                                             ),
                                           ],
                                         ),
-                                      ),
+                                        Divider(
+                                          thickness: 1,
+                                          color: Colors.grey,
+                                        ),
+                                        Text(
+                                          "Total",
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.w400,
+                                            color: Colors.grey,
+                                            fontSize: 12,
+                                          ),
+                                        ),
+                                        SizedBox(height: 4),
+                                        Text(
+                                          "${CurrencyHelper.formatRupiah(wallet.totalAmount)}",
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: AppColors.lightOrange,
+                                            fontSize: 16,
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ),
-                                );
-                              },
-                            ),
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      );
+                    }),
+
+                    SizedBox(height: 16),
+                    InkWell(
+                      onTap: () async {
+                        await Get.toNamed(Routes.WALLET_TRANSACTION);
+                        controller.fetchWallet();
+                        controller.fetchAllTransaction();
+                        controller.fetchAllWalletAmount();
+                      },
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.chevron_right,
+                            color: AppColors
+                                .primary, // Warna abu-abu agar tidak terlalu mencolok
+                            size: 25,
                           ),
-                          SizedBox(height: 16),
-                          InkWell(
-                            onTap: () => Get.toNamed(Routes.WALLET_TRANSACTION),
-                            child: Row(
-                              children: [
-                                Icon(
-                                  Icons.chevron_right,
-                                  color: AppColors
-                                      .primary, // Warna abu-abu agar tidak terlalu mencolok
-                                  size: 25,
-                                ),
-                                Text(
-                                  "Riwayat Transaksi",
-                                  style: TextStyle(fontWeight: FontWeight.w500),
-                                ),
-                              ],
-                            ),
-                          ),
-                          SizedBox(height: 8),
-
-                          ListView.separated(
-                            physics: NeverScrollableScrollPhysics(),
-                            padding: EdgeInsets.only(right: 16),
-                            shrinkWrap: true,
-                            itemBuilder: (context, index) {
-                              final TransactionModel transaction =
-                                  controller.listTransaction[index];
-
-                              return Container(
-                                height: 80,
-                                padding: EdgeInsets.all(16),
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(12),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black,
-                                      blurRadius: 0.2,
-                                    ),
-                                  ],
-                                ),
-                                child: Row(
-                                  children: [
-                                    Container(
-                                      padding: EdgeInsets.all(12),
-                                      width: 50,
-                                      height: 50,
-                                      decoration: BoxDecoration(
-                                        color: Color(0xFFF7F7F7),
-                                        borderRadius: BorderRadius.circular(12),
-                                      ),
-                                      child: SvgPicture.asset(
-                                        controller.listIcon(
-                                          transaction.wallet!.icon.toString(),
-                                        ),
-                                        colorFilter: ColorFilter.mode(
-                                          controller.listColor(
-                                            transaction.wallet!.color,
-                                          ),
-                                          BlendMode.srcIn,
-                                        ),
-                                      ),
-                                    ),
-                                    SizedBox(width: 12),
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            transaction.wallet!.name.toString(),
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                          ),
-
-                                          Text(
-                                            transaction.description
-                                                        .toString() ==
-                                                    ""
-                                                ? "(Tanpa Deskripsi)"
-                                                : transaction.description
-                                                      .toString(),
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.w400,
-                                              fontSize: 10,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    transaction.transactionType == "credit"
-                                        ? Text(
-                                            "-" +
-                                                CurrencyHelper.formatRupiah(
-                                                  transaction.amount,
-                                                ),
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.red,
-                                            ),
-                                          )
-                                        : Text(
-                                            "+" +
-                                                CurrencyHelper.formatRupiah(
-                                                  transaction.amount,
-                                                ),
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.green,
-                                            ),
-                                          ),
-                                  ],
-                                ),
-                              );
-                            },
-                            separatorBuilder: (context, index) {
-                              return SizedBox(height: 12);
-                            },
-                            itemCount: controller.listTransaction.length,
+                          Text(
+                            "Riwayat Transaksi",
+                            style: TextStyle(fontWeight: FontWeight.w500),
                           ),
                         ],
+                      ),
+                    ),
+                    SizedBox(height: 8),
+                    Obx(() {
+                      if (controller.listTransaction.isEmpty) {
+                        return Container(
+                          width: double.infinity,
+                          margin: const EdgeInsets.only(right: 16),
+                          padding: const EdgeInsets.all(50),
+                          decoration: BoxDecoration(
+                            // Menggunakan withValues untuk menghindari precision loss
+                            color: AppColors.primary.withValues(alpha: 0.05),
+                            borderRadius: BorderRadius.circular(16),
+                            border: Border.all(
+                              color: AppColors.primary.withValues(alpha: 0.2),
+                              width: 2,
+                            ),
+                          ),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.payments,
+                                color: AppColors.primary.withValues(alpha: 0.5),
+                                size: 40,
+                              ),
+                              const SizedBox(height: 12),
+                              Text(
+                                "Belum ada Transaksi Hari ini",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColors.primary,
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      }
+                      return ListView.separated(
+                        physics: NeverScrollableScrollPhysics(),
+                        padding: EdgeInsets.only(right: 16),
+                        shrinkWrap: true,
+                        itemBuilder: (context, index) {
+                          final TransactionModel transaction =
+                              controller.listTransaction[index];
+
+                          return Container(
+                            height: 80,
+                            padding: EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(12),
+                              boxShadow: [
+                                BoxShadow(color: Colors.black, blurRadius: 0.2),
+                              ],
+                            ),
+                            child: Row(
+                              children: [
+                                Container(
+                                  padding: EdgeInsets.all(12),
+                                  width: 50,
+                                  height: 50,
+                                  decoration: BoxDecoration(
+                                    color: Color(0xFFF7F7F7),
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: SvgPicture.asset(
+                                    controller.listIcon(
+                                      transaction.wallet!.icon.toString(),
+                                    ),
+                                    colorFilter: ColorFilter.mode(
+                                      controller.listColor(
+                                        transaction.wallet!.color,
+                                      ),
+                                      BlendMode.srcIn,
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(width: 12),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        transaction.wallet!.name.toString(),
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+
+                                      Text(
+                                        transaction.description.toString() == ""
+                                            ? "(Tanpa Deskripsi)"
+                                            : transaction.description
+                                                  .toString(),
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.w400,
+                                          fontSize: 10,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                transaction.transactionType == "credit"
+                                    ? Text(
+                                        "-" +
+                                            CurrencyHelper.formatRupiah(
+                                              transaction.amount,
+                                            ),
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.red,
+                                        ),
+                                      )
+                                    : Text(
+                                        "+" +
+                                            CurrencyHelper.formatRupiah(
+                                              transaction.amount,
+                                            ),
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.green,
+                                        ),
+                                      ),
+                              ],
+                            ),
+                          );
+                        },
+                        separatorBuilder: (context, index) {
+                          return SizedBox(height: 12);
+                        },
+                        itemCount: controller.listTransaction.length,
                       );
                     }),
                   ],

@@ -11,14 +11,38 @@ class TransactionProvider extends GetConnect {
     await _supabase.rpc("handle_transcation", params: data);
   }
 
+  Future<void> deleteTransaction(int id) async {
+    await _supabase.from("transaction").delete().eq("id", id);
+  }
+
   Future<List<Map<String, dynamic>>> getAllTransaction() async {
-    final String todayDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
+    // Ambil waktu sekarang dalam UTC
+    final now = DateTime.now().toUtc();
+
+    // Buat range awal dan akhir hari dalam UTC
+    final startOfDay = DateTime.utc(
+      now.year,
+      now.month,
+      now.day,
+      0,
+      0,
+      0,
+    ).toIso8601String();
+    final endOfDay = DateTime.utc(
+      now.year,
+      now.month,
+      now.day,
+      23,
+      59,
+      59,
+      999,
+    ).toIso8601String();
 
     return await _supabase
         .from("transaction")
-        .select('* ,wallet (*)')
-        .gte('created_at', '${todayDate}T00:00:00.000Z')
-        .lte('created_at', '${todayDate}T23:59:59.999Z')
+        .select('*, wallet (*)')
+        .gte('created_at', startOfDay)
+        .lte('created_at', endOfDay)
         .order('created_at', ascending: false);
   }
 

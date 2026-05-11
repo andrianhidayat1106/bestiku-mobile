@@ -191,7 +191,58 @@ class TaskListView extends GetView<TaskListController> {
                         SizedBox(height: 16),
                         Obx(() {
                           bool isDelete = controller.isDelete.value;
-
+                          if (controller.taskController.listTask.isEmpty) {
+                            return Container(
+                              width: double.infinity,
+                              padding: const EdgeInsets.symmetric(
+                                vertical: 40,
+                                horizontal: 24,
+                              ),
+                              decoration: BoxDecoration(
+                                color: AppColors.primary.withValues(
+                                  alpha: 0.05,
+                                ),
+                                borderRadius: BorderRadius.circular(16),
+                                border: Border.all(
+                                  color: AppColors.primary.withValues(
+                                    alpha: 0.2,
+                                  ),
+                                  width: 2,
+                                ),
+                              ),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.post_add_rounded,
+                                    color: AppColors.primary.withValues(
+                                      alpha: 0.4,
+                                    ),
+                                    size: 48,
+                                  ),
+                                  const SizedBox(height: 12),
+                                  Text(
+                                    "Belum ada tugas yang diinput",
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                      color: AppColors.primary,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    "Daftar tugas kamu masih kosong.",
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: AppColors.primary.withValues(
+                                        alpha: 0.6,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          }
                           return ListView.separated(
                             physics: NeverScrollableScrollPhysics(),
                             itemBuilder: (context, index) {
