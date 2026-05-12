@@ -304,9 +304,50 @@ class WalletTransactionView extends GetView<WalletTransactionController> {
                             color: AppColors.primary,
                           ),
                         ),
-                        SizedBox(height: 4),
+                        SizedBox(height: 12),
                         Obx(() {
                           var tempIsDelete = controller.isDelete.value;
+                          if (controller.listTransaction.isEmpty) {
+                            return Container(
+                              width: double.infinity,
+                              padding: const EdgeInsets.all(50),
+                              decoration: BoxDecoration(
+                                // Menggunakan withValues untuk menghindari precision loss
+                                color: AppColors.primary.withValues(
+                                  alpha: 0.05,
+                                ),
+                                borderRadius: BorderRadius.circular(16),
+                                border: Border.all(
+                                  color: AppColors.primary.withValues(
+                                    alpha: 0.2,
+                                  ),
+                                  width: 2,
+                                ),
+                              ),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.payments,
+                                    color: AppColors.primary.withValues(
+                                      alpha: 0.5,
+                                    ),
+                                    size: 40,
+                                  ),
+                                  const SizedBox(height: 12),
+                                  Text(
+                                    "Belum ada Transaksi Hari ini",
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                      color: AppColors.primary,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          }
+
                           return ListView.separated(
                             shrinkWrap: true,
                             physics: NeverScrollableScrollPhysics(),

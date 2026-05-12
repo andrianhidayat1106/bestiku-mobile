@@ -1,8 +1,11 @@
+import 'package:bestieku/app/core/theme/app_colors.dart';
 import 'package:bestieku/app/data/project_provider.dart';
 import 'package:bestieku/app/data/task_provider.dart';
 import 'package:bestieku/app/models/project_model.dart';
 import 'package:bestieku/app/models/task_model.dart';
+import 'package:bestieku/utils/snackbar_helper.dart';
 import 'package:flutter/animation.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:table_calendar/table_calendar.dart';
 
@@ -17,6 +20,9 @@ class TaskController extends GetxController {
   var selectProject = Rxn<ProjectModel>();
   var totalSelesaiHarian = 0.obs;
   var totalSelesaiProject = 0.obs;
+  var isLoadingInitialData = false.obs;
+  var isLoading = false.obs;
+
   void onDaySelected(DateTime select, DateTime focused) {
     focusedDay.value = focused;
     selectDay.value = select;
@@ -37,47 +43,6 @@ class TaskController extends GetxController {
   List get completedTasks =>
       listTask.where((task) => task.finishedAt != null).toList();
 
-  Future<void> getAllProjectByDay() async {
-    var res = await _projectProvider.fetchAllProjectByDate(focusedDay.value);
-    var data = res.map((e) => ProjectModel.fromJson(e)).toList();
-    listProject.assignAll(data);
-  }
-
-  Future<void> refreshAmount() async {
-    totalSelesaiHarian.value = await getAllAmountTask();
-    totalSelesaiProject.value = await getAllAmountTaskByProjectId();
-  }
-
-  Future<int> getAllAmountTask() async {
-    // Ambil semua task untuk hari tersebut (termasuk yang punya project maupun tidak)
-    var res = await _taskProvider.fetchAllTaskByDay(selectDay.value);
-
-    // Map ke model
-    List<TaskModel> localTasks = res.map((e) => TaskModel.fromJson(e)).toList();
-
-    // Filter: Selesai DAN project_id-nya null
-    int finishedCount = localTasks
-        .where((task) => task.finishedAt != null && task.project == null)
-        .length;
-
-    return finishedCount;
-  }
-
-  Future<int> getAllAmountTaskByProjectId() async {
-    // 1. Ambil data (pastikan return-nya sudah List<TaskModel>)
-
-    var res = await _taskProvider.fetchAllTaskByDay(selectDay.value);
-    List<TaskModel> tasks = res.map((e) => TaskModel.fromJson(e)).toList();
-
-    // 2. Filter & Hitung
-    // Kita cari yang finishedAt tidak null DAN project tidak null
-    int count = tasks
-        .where((task) => task.finishedAt != null && task.project != null)
-        .length;
-
-    return count;
-  }
-
   Color listColor(String? value) {
     switch (value) {
       case 'brown':
@@ -95,33 +60,109 @@ class TaskController extends GetxController {
     }
   }
 
-  Future<void> getAllTaskByDay() async {
-    var res = await _taskProvider.fetchTaskByDay(selectDay.value);
-    var data = res.map((e) => TaskModel.fromJson(e)).toList();
-    listTask.assignAll(data);
+  Future<void> getAllProjectByDay() async {
+    try {
+      var res = await _projectProvider.fetchAllProjectByDate(focusedDay.value);
+      var data = res.map((e) => ProjectModel.fromJson(e)).toList();
+      listProject.assignAll(data);
+    } catch (e) {
+      Get.closeAllSnackbars(); // Bersihkan snackbar lama
+      AppSnackbar.error("Gagal mengambil data proyek");
+    }
+  }
+
+  Future<void> refreshAmount() async {
+    try {
+      final results = await Future.wait([
+        getAllAmountTask(),
+        getAllAmountTaskByProjectId(),
+      ]);
+
+      totalSelesaiHarian.value = results[0];
+      totalSelesaiProject.value = results[1];
+    } catch (e) {
+      print("Error refresh amount: $e");
+    }
+  }
+
+  Future<int> getAllAmountTask() async {
+    var res = await _taskProvider.fetchAllTaskByDay(selectDay.value);
+    List<TaskModel> localTasks = res.map((e) => TaskModel.fromJson(e)).toList();
+    return localTasks
+        .where((task) => task.finishedAt != null && task.project == null)
+        .length;
   }
 
   Future<void> getAllTaskByProjectId() async {
-    int id = selectProject.value!.id!;
-    var res = await _taskProvider.fetchAllTaskByProjectId(id);
-    var data = res.map((e) => TaskModel.fromJson(e)).toList();
-    listTask.assignAll(data);
+    try {
+      int id = selectProject.value!.id!;
+      var res = await _taskProvider.fetchAllTaskByProjectId(id);
+      var data = res.map((e) => TaskModel.fromJson(e)).toList();
+      listTask.assignAll(data);
+    } catch (e) {
+      Get.closeAllSnackbars();
+      AppSnackbar.error("Gagal memuat tugas proyek");
+    }
+  }
+
+  Future<int> getAllAmountTaskByProjectId() async {
+    var res = await _taskProvider.fetchAllTaskByDay(selectDay.value);
+    List<TaskModel> tasks = res.map((e) => TaskModel.fromJson(e)).toList();
+    return tasks
+        .where((task) => task.finishedAt != null && task.project != null)
+        .length;
+  }
+
+  Future<void> getAllTaskByDay() async {
+    try {
+      var res = await _taskProvider.fetchTaskByDay(selectDay.value);
+      var data = res.map((e) => TaskModel.fromJson(e)).toList();
+      listTask.assignAll(data);
+    } catch (e) {
+      Get.closeAllSnackbars();
+      AppSnackbar.error("Gagal mengambil daftar tugas");
+    }
   }
 
   Future<void> changeFinishedTask(int index) async {
-    DateTime? updatedTime = listTask[index].finishedAt == null
-        ? DateTime.now()
-        : null;
-    listTask[index].finishedAt = updatedTime;
+    final DateTime? originalStatus = listTask[index].finishedAt;
 
-    listTask.refresh();
+    // Tampilkan Loading Dialog
+    Get.dialog(
+      const Center(child: CircularProgressIndicator(color: AppColors.primary)),
+      barrierDismissible: false,
+    );
 
-    await _taskProvider.onTaskChanged(updatedTime, listTask[index].id);
-    refreshAmount();
+    try {
+      DateTime? updatedTime = originalStatus == null ? DateTime.now() : null;
 
-    print(totalSelesaiHarian.value);
-    print(totalSelesaiProject.value);
+      // Update UI Lokal
+      listTask[index].finishedAt = updatedTime;
+      listTask.refresh();
 
-    print(listTask[index].id);
+      // Simpan ke database
+      await _taskProvider.onTaskChanged(updatedTime, listTask[index].id);
+
+      // Tutup Dialog
+      if (Get.isDialogOpen ?? false) Get.back();
+
+      // Update angka dashboard
+      refreshAmount();
+
+      // Tutup snackbar lama sebelum menampilkan yang baru
+      Get.closeAllSnackbars();
+      AppSnackbar.success(
+        updatedTime == null ? "Tugas dibatalkan" : "Tugas selesai!",
+      );
+    } catch (e) {
+      if (Get.isDialogOpen ?? false) Get.back();
+
+      // Rollback UI
+      listTask[index].finishedAt = originalStatus;
+      listTask.refresh();
+
+      Get.closeAllSnackbars();
+      AppSnackbar.error("Gagal memperbarui tugas");
+    }
   }
 }
